@@ -29,7 +29,7 @@ const connectDB = async () => {
         await sequelize.authenticate();
         console.log('MySQL Connected...');
         // Sync ALL models here to ensure tables exist
-        await sequelize.sync({ alter: true }); // updates schema if changed
+        await sequelize.sync(); // updates schema if changed
         console.log('Database Synced...');
     } catch (error) {
         console.error(`Error: ${error.message}`);
