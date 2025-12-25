@@ -1,0 +1,274 @@
+import { motion } from 'framer-motion';
+import { Calendar, MapPin, ArrowRight, Users, Trophy, UserCheck, Phone } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const Home = () => {
+    const [count, setCount] = useState(null);
+
+    useEffect(() => {
+        const fetchCount = async () => {
+            try {
+                // Determine base URL based on environment or default to simple relative path if proxy is set
+                // Assuming Vite proxy is set up or CORS is handled. 
+                // Using relative path '/api' which should work with Vite proxy or production build
+                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                const { data } = await axios.get(`${apiUrl}/api/events/count`);
+                setCount(data.count);
+            } catch (error) {
+                console.error("Error fetching participant count:", error);
+                setCount(0); // Fallback
+            }
+        };
+
+        fetchCount();
+
+        // Optional: Poll every 30 seconds for live updates
+        const interval = setInterval(fetchCount, 30000);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="relative overflow-hidden">
+            {/* Background Blobs */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+                <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-500/20 rounded-full blur-[100px] animate-blob"></div>
+                <div className="absolute top-[20%] right-[-10%] w-96 h-96 bg-purple-500/20 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
+                <div className="absolute bottom-[-10%] left-[20%] w-96 h-96 bg-pink-500/20 rounded-full blur-[100px] animate-blob animation-delay-4000"></div>
+            </div>
+
+            {/* Hero Section */}
+            <section className="relative pt-32 pb-12 lg:pt-40 lg:pb-20 px-6">
+                <div className="max-w-7xl mx-auto text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <span className="inline-block px-4 py-2 mb-6 text-sm font-semibold tracking-wider text-blue-400 uppercase bg-blue-500/10 rounded-full border border-blue-500/20 backdrop-blur-sm">
+                            The Ultimate 36 Hours Hackathon Challenge
+                        </span>
+
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading font-bold mb-2 leading-tight">
+                            CODE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">STORM</span> <span className="text-white">2026</span>
+                        </h1>
+                        <p className="text-xl text-blue-300 font-semibold mb-6">
+                            Feb 26-27, 2026 | Time: 10:00 AM (Feb 26) - 4:00 PM (Feb 27)
+                        </p>
+
+                        <div className="flex flex-wrap justify-center gap-6 mb-12">
+                            <HeroButton
+                                to="/event-schedule"
+                                icon="📅"
+                                text="Event Schedule"
+                                color="from-red-600 to-rose-600"
+                                shadow="shadow-red-500/25"
+                            />
+                            <HeroButton
+                                to="/program-plan"
+                                icon="⏱️"
+                                text="Program Plan"
+                                color="from-cyan-600 to-blue-600"
+                                shadow="shadow-cyan-500/25"
+                            />
+                            <HeroButton
+                                to="/process"
+                                icon="📜"
+                                text="Step-by-Step Process"
+                                color="from-orange-500 to-amber-600"
+                                shadow="shadow-orange-500/25"
+                            />
+                            <HeroButton
+                                to="/themes"
+                                icon="📚"
+                                text="Hackathon Themes"
+                                color="from-violet-600 to-indigo-600"
+                                shadow="shadow-violet-500/25"
+                            />
+                            <HeroButton
+                                to="/submit-idea"
+                                icon="🚀"
+                                text="Submit Your Idea"
+                                color="from-emerald-500 to-teal-600"
+                                shadow="shadow-emerald-500/25"
+                            />
+                        </div>
+
+                        <div className="max-w-4xl mx-auto mb-16">
+                            <h2 className="text-3xl font-bold text-white mb-4">WELCOME TO CODESTORM 2026</h2>
+                            <p className="text-lg text-gray-400 leading-relaxed">
+                                Join us in the ultimate 36-hour hackathon where innovators, developers, and engineers come together to solve real-world problems through cutting-edge technology.
+                            </p>
+                        </div>
+
+                        {/* Prizes Section */}
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="bg-gradient-to-r from-yellow-500/10 via-amber-500/10 to-yellow-500/10 border border-yellow-500/30 rounded-2xl p-8 max-w-5xl mx-auto mb-16 relative overflow-hidden group"
+                        >
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent"></div>
+                            <div className="flex flex-col items-center justify-center">
+                                <Trophy className="w-16 h-16 text-yellow-400 mb-4 drop-shadow-lg animate-pulse" />
+                                <h2 className="text-4xl md:text-5xl font-bold text-white mb-2">PRIZES WORTH <span className="text-yellow-400">₹1,00,000</span></h2>
+                                <p className="text-yellow-200/80">Compete to win amazing prizes, cash rewards, and tech goodies!</p>
+                            </div>
+                        </motion.div>
+
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                            <Link to="/register" className="btn-primary w-full sm:w-auto flex items-center justify-center group text-lg px-8 py-4">
+                                Register Now
+                                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                        </div>
+                    </motion.div>
+
+                    {/* Committee Section */}
+                    <div className="text-left space-y-12 max-w-6xl mx-auto">
+
+                        {/* Row 1 */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <CommitteeCard title="Chief Patrons" names={[
+                                "Sri. J. Narsimha Reddy - Chairman",
+                                "Mr. J. Trishul Reddy - Secretary",
+                                "Mr. J. Thrilok Reddy – Treasurer"
+                            ]} />
+                            <CommitteeCard title="Patrons" names={[
+                                "Dr. A. Mohan Babu - Director",
+                                "Dr. R. Lokanadham - Principal"
+                            ]} />
+                            <CommitteeCard title="Convenors" names={[
+                                "Dr. Purushotham - Vice Principal",
+                                "Dr. D. Murali - Professor-CSE-Dean",
+                                "Dr. G. Ramu - Professor & CSE-HOD"
+                            ]} />
+                        </div>
+
+                        {/* Row 2 */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <CommitteeCard title="Advisory Committee" names={[
+                                "Dr. P. Dileep Kumar Reddy - Professor, Dean-R&D",
+                                "Dr. P. Venkat Rao - Dean-Student Affairs",
+                                "Dr. M. Shoban - Director, IR & Placements",
+                                "Dr. K. Eswaramoorthy - IQAC Coordinator",
+                                "Prof. C. Dinakaran - CoE",
+                                "Prof. D. Venkatesh - Civil-HOD",
+                                "Dr. C. Sasikala - EEE-HOD",
+                                "Prof. N. Pavithra - ECE-HOD",
+                                "Dr. M. Ashok Kumar - MEC-HOD",
+                                "Dr. P. Nagaraja - MBA-HOD",
+                                "Prof. N. Sai Kiranmai - H&S-HOD",
+                                "Prof. D. Srinivas - Dean-ICT"
+                            ]} />
+                            <CommitteeCard title="Organizing Committee" names={[
+                                "All staff members - School of Computer Science, NRCM"
+                            ]} />
+                        </div>
+
+                        {/* Coordinators */}
+                        <div>
+                            <h3 className="text-2xl font-bold text-red-400 mb-6 text-center uppercase tracking-wider border-b border-red-500/20 pb-4">Coordinators</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <CoordinatorCard name="Ms. A Jayanthi" phone="8886390660" />
+                                <CoordinatorCard name="Mr. P Mabu Hussain" phone="7731050604" />
+                                <CoordinatorCard name="Mr. Suphrajith Sahoo" phone="9438034373" />
+                                <CoordinatorCard name="Mr. Avinash Reddy" phone="9505122352" />
+                                <CoordinatorCard name="Mr. Karish Laxman Rao" phone="9550513154" />
+                                <CoordinatorCard name="Mr. Gugulothu Raju" phone="9133720270" />
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    {/* Stats / Info */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
+                    >
+                        <div className="glass-card p-6 flex flex-col items-center group cursor-pointer">
+                            <div className="p-3 bg-blue-500/10 rounded-full mb-4 group-hover:bg-blue-500/20 transition-colors">
+                                <Calendar className="w-8 h-8 text-blue-400" />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">Feb 26-27, 2026</h3>
+                            <p className="text-gray-400">36 Hours of Code</p>
+                        </div>
+                        <a href="https://www.google.com/maps/search/Narsimha+Reddy+Engineering+College" target="_blank" rel="noopener noreferrer" className="glass-card p-6 flex flex-col items-center group cursor-pointer hover:border-blue-500/50">
+                            <div className="p-3 bg-purple-500/10 rounded-full mb-4 group-hover:bg-purple-500/20 transition-colors">
+                                <MapPin className="w-8 h-8 text-purple-400" />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">NRCM Campus</h3>
+                            <p className="text-gray-400">Hyderabad, India</p>
+                        </a>
+                        <div className="glass-card p-6 flex flex-col items-center group cursor-pointer">
+                            <div className="p-3 bg-pink-500/10 rounded-full mb-4 group-hover:bg-pink-500/20 transition-colors">
+                                <Users className="w-8 h-8 text-pink-400" />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">
+                                {count !== null ? (
+                                    <span className="flex items-center gap-1">
+                                        {count > 0 ? count + "+" : "0"} <span className="text-sm font-normal text-gray-400">Registered</span>
+                                    </span>
+                                ) : (
+                                    "Loading..."
+                                )}
+                            </h3>
+                            <p className="text-gray-400">Total Participants</p>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
+            <footer className="py-8 text-center text-gray-400/60 text-sm border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
+                © 2026 CodeStorm Hackathon, NRCMEC. All rights reserved.
+            </footer>
+        </div>
+    );
+};
+
+const CommitteeCard = ({ title, names }) => (
+    <div className="group">
+        <h3 className="text-xl font-bold text-red-400 mb-4 uppercase tracking-wider border-l-4 border-red-500 pl-3 group-hover:border-red-400 transition-colors">{title}</h3>
+        <div className="bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-red-500/30 transition-all">
+            <ul className="space-y-2">
+                {names.map((name, i) => (
+                    <li key={i} className="text-gray-300 text-sm font-medium flex items-start gap-2">
+                        <span className="mt-1.5 w-1.5 h-1.5 bg-red-500 rounded-full flex-shrink-0" />
+                        {name}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </div>
+);
+
+const HeroButton = ({ to, icon, text, color, shadow }) => (
+    <Link
+        to={to}
+        className="relative group"
+    >
+        <div className={`absolute -inset-0.5 bg-gradient-to-r ${color} rounded-lg blur opacity-60 group-hover:opacity-100 transition duration-200 ${shadow}`}></div>
+        <div className="relative flex items-center gap-3 px-8 py-4 bg-gray-900 rounded-lg border border-gray-800 leading-none hover:bg-gray-800 transition duration-200">
+            <span className="text-2xl filter drop-shadow-lg group-hover:scale-110 transition-transform duration-200">{icon}</span>
+            <span className="font-bold text-gray-100 group-hover:text-white tracking-wide text-base">{text}</span>
+        </div>
+    </Link>
+);
+
+const CoordinatorCard = ({ name, phone }) => (
+    <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between hover:bg-white/10 transition-colors">
+        <div>
+            <h4 className="font-bold text-white text-sm">{name}</h4>
+        </div>
+        <div className="flex items-center gap-2 text-blue-400 font-mono text-sm bg-blue-500/10 px-2 py-1 rounded">
+            <Phone size={14} /> {phone}
+        </div>
+    </div>
+);
+
+export default Home;

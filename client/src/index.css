@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-hack-base text-gray-100 font-sans overflow-x-hidden selection:bg-hack-accent selection:text-white;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl;
+  }
+
+  .glass-card {
+    @apply bg-gray-900/40 backdrop-blur-md border border-gray-700/50 shadow-lg rounded-xl transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    @apply border-hack-accent/50 bg-gray-800/60 shadow-hack-accent/20 transform -translate-y-1;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:scale-105 active:scale-95;
+  }
+
+  .btn-outline {
+    @apply px-6 py-3 border border-white/20 hover:border-white/50 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-lg transition-all duration-300 backdrop-blur-sm;
+  }
+
+  .section-padding {
+    @apply px-6 py-20 lg:px-20;
+  }
+}
