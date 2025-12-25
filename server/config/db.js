@@ -5,8 +5,11 @@ dotenv.config();
 
 const sequelize = process.env.DATABASE_URL
   ? new Sequelize(process.env.DATABASE_URL, {
-      dialect: 'mysql',
-      logging: false
+      dialect: "mysql",
+      logging: false,
+      dialectOptions: {
+        ssl: true
+      }
     })
   : new Sequelize(
       process.env.DB_NAME,
@@ -14,10 +17,11 @@ const sequelize = process.env.DATABASE_URL
       process.env.DB_PASSWORD,
       {
         host: process.env.DB_HOST,
-        dialect: 'mysql',
+        dialect: "mysql",
         logging: false
       }
     );
+
 
 
 const connectDB = async () => {
