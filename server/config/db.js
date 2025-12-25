@@ -8,7 +8,7 @@ const sequelize = process.env.DATABASE_URL
       dialect: "mysql",
       logging: false,
       dialectOptions: {
-        ssl: true
+        ssl: {}
       }
     })
   : new Sequelize(
