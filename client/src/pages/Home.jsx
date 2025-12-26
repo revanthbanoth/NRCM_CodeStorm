@@ -87,13 +87,7 @@ const Home = () => {
                                 color="from-violet-600 to-indigo-600"
                                 shadow="shadow-violet-500/25"
                             />
-                            <HeroButton
-                                to="/submit-idea"
-                                icon="🚀"
-                                text="Submit Your Idea"
-                                color="from-emerald-500 to-teal-600"
-                                shadow="shadow-emerald-500/25"
-                            />
+
                         </div>
 
                         <div className="max-w-4xl mx-auto mb-16">
@@ -119,10 +113,10 @@ const Home = () => {
                         </motion.div>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                            <Link to="/register" className="btn-primary w-full sm:w-auto flex items-center justify-center group text-lg px-8 py-4">
+                            <a href="https://forms.gle/PCrPJ63bVVNoARmJ6" target="_blank" rel="noopener noreferrer" className="btn-primary w-full sm:w-auto flex items-center justify-center group text-lg px-8 py-4">
                                 Register Now
                                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </Link>
+                            </a>
                         </div>
                     </motion.div>
 
@@ -133,51 +127,37 @@ const Home = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <CommitteeCard title="Chief Patrons" names={[
                                 "Sri. J. Narsimha Reddy - Chairman",
-                                "Mr. J. Trishul Reddy - Secretary",
-                                "Mr. J. Thrilok Reddy – Treasurer"
+                                "Sri. J. Trishul Reddy - Secretary",
+                                "Sri. J. Thrilok Reddy - Treasurer"
                             ]} />
                             <CommitteeCard title="Patrons" names={[
-                                "Dr. A. Mohan Babu - Director",
+                                "Dr. A.Mohan Babu - Director",
                                 "Dr. R. Lokanadham - Principal"
                             ]} />
-                            <CommitteeCard title="Convenors" names={[
-                                "Dr. Purushotham - Vice Principal",
-                                "Dr. D. Murali - Professor-CSE-Dean",
-                                "Dr. G. Ramu - Professor & CSE-HOD"
+                            <CommitteeCard title="Conveners" names={[
+                                "Dr.Purushotham - Vice Principal",
+                                "Dr.G.Ramu - Professor & HoD CSE"
                             ]} />
                         </div>
 
-                        {/* Row 2 */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <CommitteeCard title="Advisory Committee" names={[
-                                "Dr. P. Dileep Kumar Reddy - Professor, Dean-R&D",
-                                "Dr. P. Venkat Rao - Dean-Student Affairs",
-                                "Dr. M. Shoban - Director, IR & Placements",
-                                "Dr. K. Eswaramoorthy - IQAC Coordinator",
-                                "Prof. C. Dinakaran - CoE",
-                                "Prof. D. Venkatesh - Civil-HOD",
-                                "Dr. C. Sasikala - EEE-HOD",
-                                "Prof. N. Pavithra - ECE-HOD",
-                                "Dr. M. Ashok Kumar - MEC-HOD",
-                                "Dr. P. Nagaraja - MBA-HOD",
-                                "Prof. N. Sai Kiranmai - H&S-HOD",
-                                "Prof. D. Srinivas - Dean-ICT"
-                            ]} />
-                            <CommitteeCard title="Organizing Committee" names={[
-                                "All staff members - School of Computer Science, NRCM"
-                            ]} />
-                        </div>
+
 
                         {/* Coordinators */}
+                        {/* Faculty Coordinators */}
+                        <div className="mb-12">
+                            <h3 className="text-2xl font-bold text-red-400 mb-6 text-center uppercase tracking-wider border-b border-red-500/20 pb-4">Faculty Coordinators</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                                <CoordinatorCard name="Mrs. D. Nikhitha Reddy" phone="8125207382" />
+                                <CoordinatorCard name="Mr. G. Praveen Kumar" phone="9959732146" />
+                            </div>
+                        </div>
+
+                        {/* Students Coordinators */}
                         <div>
-                            <h3 className="text-2xl font-bold text-red-400 mb-6 text-center uppercase tracking-wider border-b border-red-500/20 pb-4">Coordinators</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <CoordinatorCard name="Ms. A Jayanthi" phone="8886390660" />
-                                <CoordinatorCard name="Mr. P Mabu Hussain" phone="7731050604" />
-                                <CoordinatorCard name="Mr. Suphrajith Sahoo" phone="9438034373" />
-                                <CoordinatorCard name="Mr. Avinash Reddy" phone="9505122352" />
-                                <CoordinatorCard name="Mr. Karish Laxman Rao" phone="9550513154" />
-                                <CoordinatorCard name="Mr. Gugulothu Raju" phone="9133720270" />
+                            <h3 className="text-2xl font-bold text-red-400 mb-6 text-center uppercase tracking-wider border-b border-red-500/20 pb-4">Students Coordinators</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                                <CoordinatorCard name="Ms.Manepally Archana" phone="8309734530" />
+                                <CoordinatorCard name="Mr. Tulasitilak" phone="7780554004" />
                             </div>
                         </div>
 
