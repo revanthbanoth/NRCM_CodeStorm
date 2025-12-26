@@ -34,8 +34,7 @@ function App() {
           <Route path="/process" element={<Process />} />
           <Route path="/themes" element={<Themes />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/submit-idea" element={<IdeasSubmission />} />
-          <Route path="/submit-idea" element={<IdeasSubmission />} />
+
         </Routes>
         <ToastContainer position="bottom-right" theme="dark" />
       </div>
