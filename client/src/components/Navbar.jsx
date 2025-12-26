@@ -50,9 +50,9 @@ const Navbar = () => {
                                 </Link>
                             ))}
 
-                            <Link to="/register" className="btn-primary text-sm px-4 py-2">
+                            <a href="https://forms.gle/PCrPJ63bVVNoARmJ6" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm px-4 py-2">
                                 Register
-                            </Link>
+                            </a>
                         </div>
                     </div>
 
@@ -86,7 +86,7 @@ const Navbar = () => {
                                 </Link>
                             ))}
                             <div className="pt-4 flex gap-4">
-                                <Link to="/register" className="btn-primary w-full text-center">Register</Link>
+                                <a href="https://forms.gle/PCrPJ63bVVNoARmJ6" target="_blank" rel="noopener noreferrer" className="btn-primary w-full text-center">Register</a>
                             </div>
                         </div>
                     </motion.div>
