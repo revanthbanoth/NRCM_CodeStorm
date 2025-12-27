@@ -22,8 +22,15 @@ export default {
             animation: {
                 'blob': 'blob 7s infinite',
                 'fade-in': 'fadeIn 1s ease-out forwards',
+                'text-shimmer': 'text-shimmer 2.5s ease-out infinite alternate',
+                'gradient-xy': 'gradient-xy 15s ease infinite',
+                'spin-slow': 'spin 3s linear infinite',
+                'shine': 'shine 1.5s',
             },
             keyframes: {
+                shine: {
+                    '100%': { left: '125%' },
+                },
                 blob: {
                     '0%': { transform: 'translate(0px, 0px) scale(1)' },
                     '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
@@ -33,6 +40,20 @@ export default {
                 fadeIn: {
                     '0%': { opacity: '0' },
                     '100%': { opacity: '1' },
+                },
+                'text-shimmer': {
+                    '0%': { backgroundPosition: '0% 50%' },
+                    '100%': { backgroundPosition: '100% 50%' },
+                },
+                'gradient-xy': {
+                    '0%, 100%': {
+                        'background-size': '400% 400%',
+                        'background-position': 'left center'
+                    },
+                    '50%': {
+                        'background-size': '400% 400%',
+                        'background-position': 'right center'
+                    }
                 }
             }
         },

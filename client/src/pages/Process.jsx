@@ -149,22 +149,25 @@ const Process = () => {
                 </div>
             </div>
 
-            <div className="mt-20 text-center">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    className="inline-block p-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl"
+            {/* CTA Section */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="mt-20 text-center"
+            >
+                <Link
+                    to="/idea-submission"
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold text-lg rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105 transition-all duration-300"
                 >
-                    <div className="bg-gray-900 rounded-lg px-8 py-6">
-                        <h3 className="text-2xl font-bold text-white mb-2">Ready to Start?</h3>
-                        <p className="text-gray-400 mb-4">The journey of a thousand miles begins with a single step.</p>
-                        <Link to="/submit-idea" className="btn-primary inline-flex items-center gap-2">
-                            Submit Your Idea Now <span className="text-xl">🚀</span>
-                        </Link>
-                    </div>
-                </motion.div>
-            </div>
-
+                    <Lightbulb className="w-6 h-6" />
+                    Submit Your Idea
+                </Link>
+                <p className="mt-4 text-gray-500 text-sm">
+                    Ready to showcase your innovation? Submit your idea now!
+                </p>
+            </motion.div>
         </div>
     );
 };

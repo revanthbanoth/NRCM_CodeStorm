@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import { Calendar, MapPin, ArrowRight, Users, Trophy, UserCheck, Phone } from 'lucide-react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { Calendar, MapPin, ArrowRight, Users, Trophy, UserCheck, Phone, Clock, FileText, LayoutGrid } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { useState, useEffect } from 'react';
@@ -11,21 +11,16 @@ const Home = () => {
     useEffect(() => {
         const fetchCount = async () => {
             try {
-                // Determine base URL based on environment or default to simple relative path if proxy is set
-                // Assuming Vite proxy is set up or CORS is handled. 
-                // Using relative path '/api' which should work with Vite proxy or production build
                 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
                 const { data } = await axios.get(`${apiUrl}/api/events/count`);
                 setCount(data.count);
             } catch (error) {
                 console.error("Error fetching participant count:", error);
-                setCount(0); // Fallback
+                setCount(0);
             }
         };
 
         fetchCount();
-
-        // Optional: Poll every 30 seconds for live updates
         const interval = setInterval(fetchCount, 30000);
         return () => clearInterval(interval);
     }, []);
@@ -61,39 +56,27 @@ const Home = () => {
                         <div className="flex flex-wrap justify-center gap-6 mb-12">
                             <HeroButton
                                 to="/event-schedule"
-                                icon="📅"
+                                icon={<Calendar className="w-6 h-6 text-white" />}
                                 text="Event Schedule"
                                 color="from-red-600 to-rose-600"
-                                shadow="shadow-red-500/25"
+                                shadowColor="shadow-red-500/40"
                             />
-                            <HeroButton
-                                to="/program-plan"
-                                icon="⏱️"
-                                text="Program Plan"
-                                color="from-cyan-600 to-blue-600"
-                                shadow="shadow-cyan-500/25"
-                            />
+                            <ProgramPlanButton />
                             <HeroButton
                                 to="/process"
-                                icon="📜"
+                                icon={<FileText className="w-6 h-6 text-white" />}
                                 text="Step-by-Step Process"
                                 color="from-orange-500 to-amber-600"
-                                shadow="shadow-orange-500/25"
+                                shadowColor="shadow-orange-500/40"
                             />
                             <HeroButton
                                 to="/themes"
-                                icon="📚"
+                                icon={<LayoutGrid className="w-6 h-6 text-white" />}
                                 text="Hackathon Themes"
                                 color="from-violet-600 to-indigo-600"
-                                shadow="shadow-violet-500/25"
+                                shadowColor="shadow-violet-500/40"
                             />
-                            <HeroButton
-                                to="/submit-idea"
-                                icon="🚀"
-                                text="Submit Your Idea"
-                                color="from-emerald-500 to-teal-600"
-                                shadow="shadow-emerald-500/25"
-                            />
+
                         </div>
 
                         <div className="max-w-4xl mx-auto mb-16">
@@ -133,51 +116,35 @@ const Home = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <CommitteeCard title="Chief Patrons" names={[
                                 "Sri. J. Narsimha Reddy - Chairman",
-                                "Mr. J. Trishul Reddy - Secretary",
-                                "Mr. J. Thrilok Reddy – Treasurer"
+                                "Sri. J. Trishul Reddy - Secretary",
+                                "Sri. J. Thrilok Reddy - Treasurer"
                             ]} />
                             <CommitteeCard title="Patrons" names={[
-                                "Dr. A. Mohan Babu - Director",
+                                "Dr. A.Mohan Babu - Director",
                                 "Dr. R. Lokanadham - Principal"
                             ]} />
-                            <CommitteeCard title="Convenors" names={[
-                                "Dr. Purushotham - Vice Principal",
-                                "Dr. D. Murali - Professor-CSE-Dean",
-                                "Dr. G. Ramu - Professor & CSE-HOD"
-                            ]} />
-                        </div>
-
-                        {/* Row 2 */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <CommitteeCard title="Advisory Committee" names={[
-                                "Dr. P. Dileep Kumar Reddy - Professor, Dean-R&D",
-                                "Dr. P. Venkat Rao - Dean-Student Affairs",
-                                "Dr. M. Shoban - Director, IR & Placements",
-                                "Dr. K. Eswaramoorthy - IQAC Coordinator",
-                                "Prof. C. Dinakaran - CoE",
-                                "Prof. D. Venkatesh - Civil-HOD",
-                                "Dr. C. Sasikala - EEE-HOD",
-                                "Prof. N. Pavithra - ECE-HOD",
-                                "Dr. M. Ashok Kumar - MEC-HOD",
-                                "Dr. P. Nagaraja - MBA-HOD",
-                                "Prof. N. Sai Kiranmai - H&S-HOD",
-                                "Prof. D. Srinivas - Dean-ICT"
-                            ]} />
-                            <CommitteeCard title="Organizing Committee" names={[
-                                "All staff members - School of Computer Science, NRCM"
+                            <CommitteeCard title="Conveners" names={[
+                                "Dr.Purushotham - Vice Principal",
+                                "Dr.G.Ramu - Professor & HoD CSE"
                             ]} />
                         </div>
 
                         {/* Coordinators */}
+                        {/* Faculty Coordinators */}
+                        <div className="mb-12">
+                            <h3 className="text-2xl font-bold text-red-400 mb-6 text-center uppercase tracking-wider border-b border-red-500/20 pb-4">Faculty Coordinators</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                                <CoordinatorCard name="Mrs. D. Nikhitha Reddy" phone="8125207382" />
+                                <CoordinatorCard name="Mr. G. Praveen Kumar" phone="9959732146" />
+                            </div>
+                        </div>
+
+                        {/* Students Coordinators */}
                         <div>
-                            <h3 className="text-2xl font-bold text-red-400 mb-6 text-center uppercase tracking-wider border-b border-red-500/20 pb-4">Coordinators</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <CoordinatorCard name="Ms. A Jayanthi" phone="8886390660" />
-                                <CoordinatorCard name="Mr. P Mabu Hussain" phone="7731050604" />
-                                <CoordinatorCard name="Mr. Suphrajith Sahoo" phone="9438034373" />
-                                <CoordinatorCard name="Mr. Avinash Reddy" phone="9505122352" />
-                                <CoordinatorCard name="Mr. Karish Laxman Rao" phone="9550513154" />
-                                <CoordinatorCard name="Mr. Gugulothu Raju" phone="9133720270" />
+                            <h3 className="text-2xl font-bold text-red-400 mb-6 text-center uppercase tracking-wider border-b border-red-500/20 pb-4">Students Coordinators</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                                <CoordinatorCard name="Ms.Manepally Archana" phone="8309734530" />
+                                <CoordinatorCard name="Mr. Tulasitilak" phone="7780554004" />
                             </div>
                         </div>
 
@@ -231,6 +198,49 @@ const Home = () => {
     );
 };
 
+const ProgramPlanButton = () => {
+    return (
+        <Link to="/program-plan">
+            <motion.div
+                whileHover={{ rotateY: 15, rotateX: 5 }}
+                animate={{
+                    y: [0, -10, 0],
+                    rotate: [0, 1, 0, -1, 0]
+                }}
+                transition={{
+                    y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 5, repeat: Infinity, ease: "linear" }
+                }}
+                className="relative group perspective-1000"
+            >
+                {/* 3D Box Effect Container */}
+                <div className="relative w-64 h-20 transform-style-3d transition-transform duration-500 group-hover:scale-105">
+                    {/* Back Layer (Glow) */}
+                    <div className="absolute inset-0 bg-cyan-500 rounded-xl blur-2xl opacity-40 animate-pulse group-hover:opacity-75 transition duration-300"></div>
+
+                    {/* Main Face */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 rounded-xl border border-white/20 shadow-2xl flex items-center justify-center gap-3 overflow-hidden">
+
+                        {/* Animated Grid/Tech Background */}
+                        <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
+                        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(68,107,158,0.2)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat animate-shine opacity-60"></div>
+
+                        {/* Icon with Spinning Ring */}
+                        <div className="relative">
+                            <div className="absolute -inset-2 border-2 border-white/30 rounded-full animate-spin-slow border-t-transparent border-l-transparent"></div>
+                            <Clock className="w-6 h-6 text-white relative z-10" />
+                        </div>
+
+                        <span className="font-bold text-white text-lg tracking-wider drop-shadow-lg z-10">
+                            PROGRAM PLAN
+                        </span>
+                    </div>
+                </div>
+            </motion.div>
+        </Link>
+    );
+};
+
 const CommitteeCard = ({ title, names }) => (
     <div className="group">
         <h3 className="text-xl font-bold text-red-400 mb-4 uppercase tracking-wider border-l-4 border-red-500 pl-3 group-hover:border-red-400 transition-colors">{title}</h3>
@@ -247,18 +257,39 @@ const CommitteeCard = ({ title, names }) => (
     </div>
 );
 
-const HeroButton = ({ to, icon, text, color, shadow }) => (
-    <Link
-        to={to}
-        className="relative group"
-    >
-        <div className={`absolute -inset-0.5 bg-gradient-to-r ${color} rounded-lg blur opacity-60 group-hover:opacity-100 transition duration-200 ${shadow}`}></div>
-        <div className="relative flex items-center gap-3 px-8 py-4 bg-gray-900 rounded-lg border border-gray-800 leading-none hover:bg-gray-800 transition duration-200">
-            <span className="text-2xl filter drop-shadow-lg group-hover:scale-110 transition-transform duration-200">{icon}</span>
-            <span className="font-bold text-gray-100 group-hover:text-white tracking-wide text-base">{text}</span>
-        </div>
-    </Link>
-);
+const HeroButton = ({ to, icon, text, color, shadowColor }) => {
+    return (
+        <Link to={to}>
+            <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    repeatType: "mirror"
+                }}
+                className="relative group"
+            >
+                {/* Glow behind */}
+                <div className={`absolute -inset-2 bg-gradient-to-r ${color} rounded-xl blur-xl opacity-40 group-hover:opacity-60 transition duration-500 animate-pulse`}></div>
+
+                {/* Main Button */}
+                <div className={`relative px-8 py-5 rounded-xl bg-gradient-to-r ${color} flex items-center gap-4 overflow-hidden border border-white/20 shadow-xl ${shadowColor} backdrop-blur-md`}>
+
+                    {/* Shine/Sheen overlay */}
+                    <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 group-hover:animate-shine" />
+
+                    <span className="text-2xl text-white drop-shadow-md group-hover:scale-110 transition-transform duration-300 relative z-10">
+                        {icon}
+                    </span>
+                    <span className="font-bold text-white tracking-wide text-lg drop-shadow-md relative z-10">
+                        {text}
+                    </span>
+                </div>
+            </motion.div>
+        </Link>
+    );
+};
 
 const CoordinatorCard = ({ name, phone }) => (
     <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between hover:bg-white/10 transition-colors">
