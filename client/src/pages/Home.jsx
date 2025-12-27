@@ -102,10 +102,10 @@ const Home = () => {
                         </motion.div>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                            <Link to="/register" className="btn-primary w-full sm:w-auto flex items-center justify-center group text-lg px-8 py-4">
+                            <a href="https://forms.gle/PCrPJ63bVVNoARmJ6" target="_blank" rel="noopener noreferrer" className="btn-primary w-full sm:w-auto flex items-center justify-center group text-lg px-8 py-4">
                                 Register Now
                                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </Link>
+                            </a>
                         </div>
                     </motion.div>
 
@@ -128,6 +128,7 @@ const Home = () => {
                                 "Dr.G.Ramu - Professor & HoD CSE"
                             ]} />
                         </div>
+
 
                         {/* Coordinators */}
                         {/* Faculty Coordinators */}
