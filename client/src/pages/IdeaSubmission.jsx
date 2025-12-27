@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Code, FileText, Layers, Lightbulb, Users, Mail } from 'lucide-react';
+import { Send, Code, FileText, Layers, Lightbulb, Users, Mail, Link as LinkIcon, Download } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -12,7 +12,8 @@ const IdeaSubmission = () => {
         theme: '',
         problemStatement: '',
         solutionDescription: '',
-        techStack: ''
+        techStack: '',
+        pptFile: null
     });
     const [loading, setLoading] = useState(false);
 
@@ -21,7 +22,11 @@ const IdeaSubmission = () => {
     ];
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (e.target.type === 'file') {
+            setFormData({ ...formData, [e.target.name]: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -29,11 +34,24 @@ const IdeaSubmission = () => {
         setLoading(true);
         try {
             const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            const res = await axios.post(`${apiUrl}/api/events/idea`, formData);
+
+            const submissionData = new FormData();
+            Object.keys(formData).forEach(key => {
+                submissionData.append(key, formData[key]);
+            });
+
+            const res = await axios.post(`${apiUrl}/api/events/idea`, submissionData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
             toast.success('Idea Submitted Successfully! 🚀');
             setFormData({
-                teamName: '', leaderEmail: '', projectTitle: '', theme: '', problemStatement: '', solutionDescription: '', techStack: ''
+                teamName: '', leaderEmail: '', projectTitle: '', theme: '', problemStatement: '', solutionDescription: '', techStack: '', pptFile: null
             });
+
+            // Reset file input manually if needed
+            document.getElementById('pptFile').value = '';
+
         } catch (error) {
             toast.error(error.response?.data?.message || 'Submission failed');
         } finally {
@@ -90,6 +108,36 @@ const IdeaSubmission = () => {
                         <TextAreaGroup name="problemStatement" placeholder="Problem Statement (Max 500 chars)" value={formData.problemStatement} onChange={handleChange} required rows={3} />
                         <TextAreaGroup name="solutionDescription" placeholder="Proposed Solution (Max 1000 chars)" value={formData.solutionDescription} onChange={handleChange} required rows={5} />
                         <InputGroup icon={<Code size={18} />} name="techStack" placeholder="Tech Stack (e.g., MERN, Python, Flutter)" value={formData.techStack} onChange={handleChange} required />
+                    </div>
+
+                    {/* PPT Section */}
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between px-1">
+                            <label className="text-sm font-medium text-gray-300">Upload PPT Report</label>
+                            <a
+                                href="#"
+                                className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
+                            >
+                                <Download size={14} /> Download Template
+                            </a>
+                        </div>
+                        <div className="relative group">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                                <LinkIcon size={18} />
+                            </div>
+                            <input
+                                id="pptFile"
+                                type="file"
+                                name="pptFile"
+                                accept=".ppt,.pptx,.pdf"
+                                onChange={handleChange}
+                                className="w-full bg-gray-900/50 border border-gray-700 rounded-lg py-3 pl-10 pr-4 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
+                                required
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500 px-1">
+                            *Upload your idea presentation (PPT/PDF). Max size 5MB.
+                        </p>
                     </div>
 
                     <button
