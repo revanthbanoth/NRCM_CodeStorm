@@ -115,15 +115,10 @@ const Navbar = () => {
                                     {link.name}
                                 </Link>
                             ))}
-<<<<<<< HEAD
-    <div className="pt-4 px-3">
-        <Link to="/register" className="w-full block py-3 text-center bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg text-white font-bold shadow-lg shadow-blue-500/25">Register Now</Link>
-=======
-                            <div className="pt-4 flex gap-4">
-            <a href="https://forms.gle/PCrPJ63bVVNoARmJ6" target="_blank" rel="noopener noreferrer" className="btn-primary w-full text-center">Register</a>
->>>>>>> a2b72e3496ef2e319d3bba718e364dcf6f54a33c
-        </div>
-    </div>
+                            <div className="pt-4 px-3">
+                                <Link to="/register" className="w-full block py-3 text-center bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg text-white font-bold shadow-lg shadow-blue-500/25">Register Now</Link>
+                            </div>
+                        </div>
                     </motion.div >
                 )}
             </AnimatePresence >
