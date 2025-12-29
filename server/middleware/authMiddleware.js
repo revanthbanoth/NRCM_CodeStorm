@@ -12,11 +12,12 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // ✅ ENV ADMIN (NO DB)
+      // ✅ ADMIN (ENV BASED — FINAL FIX)
       if (decoded.id === 'admin' && decoded.isAdmin === true) {
         req.user = {
           id: 'admin',
           isAdmin: true,
+          role: 'admin',
         };
         return next();
       }
@@ -27,27 +28,21 @@ const protect = async (req, res, next) => {
         return res.status(401).json({ message: 'User not found' });
       }
 
-      req.user = {
-        id: user.id,
-        isAdmin: Boolean(user.isAdmin),
-      };
-
+      req.user = user;
       next();
-    } catch (error) {
-      console.error('Auth error:', error.message);
-      res.status(401).json({ message: 'Token failed' });
+    } catch (err) {
+      return res.status(401).json({ message: 'Not authorized, token failed' });
     }
   } else {
-    res.status(401).json({ message: 'No token' });
+    return res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
 
 const admin = (req, res, next) => {
   if (req.user && req.user.isAdmin === true) {
-    next();
-  } else {
-    res.status(403).json({ message: 'Admin access denied' });
+    return next();
   }
+  return res.status(403).json({ message: 'Admin access denied' });
 };
 
 module.exports = { protect, admin };
