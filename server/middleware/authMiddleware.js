@@ -1,9 +1,15 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+/**
+ * ===============================
+ * PROTECT MIDDLEWARE
+ * ===============================
+ */
 const protect = async (req, res, next) => {
   let token;
 
+  // Check Authorization header
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
@@ -13,7 +19,7 @@ const protect = async (req, res, next) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // 🔴 SPECIAL CASE: ADMIN (ENV BASED)
+      // ✅ ADMIN (ENV BASED LOGIN)
       if (decoded.id === 'admin') {
         req.user = {
           id: 'admin',
@@ -24,30 +30,47 @@ const protect = async (req, res, next) => {
         return next();
       }
 
-      // 🔵 NORMAL USER
+      // ✅ NORMAL USER (DATABASE)
       const user = await User.findByPk(decoded.id);
+
       if (!user) {
         return res.status(401).json({ message: 'User not found' });
       }
 
-      req.user = user;
-      next();
+      req.user = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin || false,
+      };
+
+      return next();
     } catch (error) {
+      console.error('JWT error:', error.message);
       return res.status(401).json({ message: 'Not authorized, token failed' });
     }
   }
 
-  if (!token) {
-    return res.status(401).json({ message: 'Not authorized, no token' });
-  }
+  return res.status(401).json({ message: 'Not authorized, no token' });
 };
 
+/**
+ * ===============================
+ * ADMIN MIDDLEWARE
+ * ===============================
+ */
 const admin = (req, res, next) => {
-  if (req.user && req.user.isAdmin === true) {
-    next();
-  } else {
-    res.status(403).json({ message: 'Admin access denied' });
+  // ✅ Allow ENV admin
+  if (req.user?.id === 'admin') {
+    return next();
   }
+
+  // ✅ Allow DB admin
+  if (req.user?.isAdmin === true) {
+    return next();
+  }
+
+  return res.status(403).json({ message: 'Admin access denied' });
 };
 
 module.exports = { protect, admin };
