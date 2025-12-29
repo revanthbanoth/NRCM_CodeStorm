@@ -12,11 +12,10 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // ✅ ENV ADMIN (NO DB REQUIRED)
-      if (decoded.id === 'admin') {
+      // ✅ ENV ADMIN (NO DB)
+      if (decoded.id === 'admin' && decoded.isAdmin === true) {
         req.user = {
           id: 'admin',
-          email: process.env.ADMIN_EMAIL,
           isAdmin: true,
         };
         return next();
@@ -30,24 +29,24 @@ const protect = async (req, res, next) => {
 
       req.user = {
         id: user.id,
-        email: user.email,
         isAdmin: Boolean(user.isAdmin),
       };
 
       next();
-    } catch (err) {
-      return res.status(401).json({ message: 'Token invalid' });
+    } catch (error) {
+      console.error('Auth error:', error.message);
+      res.status(401).json({ message: 'Token failed' });
     }
   } else {
-    return res.status(401).json({ message: 'No token provided' });
+    res.status(401).json({ message: 'No token' });
   }
 };
 
 const admin = (req, res, next) => {
-  if (req.user?.isAdmin) {
+  if (req.user && req.user.isAdmin === true) {
     next();
   } else {
-    return res.status(403).json({ message: 'Admin only route' });
+    res.status(403).json({ message: 'Admin access denied' });
   }
 };
 
