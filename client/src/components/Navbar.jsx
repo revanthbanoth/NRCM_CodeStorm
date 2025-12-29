@@ -9,14 +9,25 @@ const Navbar = () => {
     const location = useLocation();
 
     const navLinks = [
-        { name: 'Home', path: '/' },
-        { name: 'Event Schedule', path: '/event-schedule' },
-        { name: 'Program Plan', path: '/program-plan' },
-        { name: 'Themes', path: '/themes' },
-        { name: 'Step-by-Step Process', path: '/process' },
+        { name: 'Home', path: '#home' },
+        { name: 'Event Schedule', path: '#event-schedule' },
+        { name: 'Program Plan', path: '#program-plan' },
+        { name: 'Themes', path: '#themes' },
+        { name: 'Step-by-Step Process', path: '#process' },
     ];
 
-    const toggleMenu = () => setIsOpen(!isOpen);
+    const scrollToSection = (id) => {
+        if (location.pathname !== '/') {
+            window.location.href = '/' + id;
+            return;
+        }
+
+        const element = document.getElementById(id.replace('#', ''));
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            setIsOpen(false);
+        }
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -39,7 +50,7 @@ const Navbar = () => {
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    <Link to="/" className="flex-shrink-0 flex items-center gap-2 group">
+                    <button onClick={() => scrollToSection('#home')} className="flex-shrink-0 flex items-center gap-2 group focus:outline-none">
                         <div className="relative p-2 rounded-lg transition-all duration-300">
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-violet-600 rounded-lg blur opacity-50 group-hover:opacity-100 transition duration-500"></div>
                             <div className="relative bg-black rounded-lg p-1">
@@ -49,15 +60,15 @@ const Navbar = () => {
                         <span className="font-heading font-bold text-lg tracking-wider text-white">
                             CODESTORM<span className="text-blue-500 group-hover:text-violet-500 transition-colors">2026</span>
                         </span>
-                    </Link>
+                    </button>
 
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-8">
                             {navLinks.map((link) => (
-                                <Link
+                                <button
                                     key={link.name}
-                                    to={link.path}
-                                    className={`relative px-3 py-2 text-sm font-medium transition-colors duration-300 group ${location.pathname === link.path ? 'text-white' : 'text-gray-400 hover:text-white'
+                                    onClick={() => scrollToSection(link.path)}
+                                    className={`relative px-3 py-2 text-sm font-medium transition-colors duration-300 group focus:outline-none ${location.pathname === '/' && window.location.hash === link.path ? 'text-white' : 'text-gray-400 hover:text-white'
                                         }`}
                                 >
                                     {link.name}
@@ -65,14 +76,14 @@ const Navbar = () => {
                                     <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gray-500 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
 
                                     {/* Active Tab Gradient */}
-                                    {location.pathname === link.path && (
+                                    {location.pathname === '/' && window.location.hash === link.path && (
                                         <motion.div
                                             layoutId="navbar-indicator"
                                             className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-violet-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
                                             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                         />
                                     )}
-                                </Link>
+                                </button>
                             ))}
 
                             <Link to="/register" className="relative ml-4 px-6 py-2 group overflow-hidden rounded-lg">
@@ -84,7 +95,7 @@ const Navbar = () => {
 
                     <div className="-mr-2 flex md:hidden">
                         <button
-                            onClick={toggleMenu}
+                            onClick={() => setIsOpen(!isOpen)}
                             className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 focus:outline-none transition-all"
                         >
                             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -104,16 +115,16 @@ const Navbar = () => {
                     >
                         <div className="px-2 pt-2 pb-6 space-y-1 sm:px-3">
                             {navLinks.map((link) => (
-                                <Link
+                                <button
                                     key={link.name}
-                                    to={link.path}
-                                    className={`block px-3 py-3 rounded-lg text-base font-medium transition-colors ${location.pathname === link.path
+                                    onClick={() => scrollToSection(link.path)}
+                                    className={`block w-full text-left px-3 py-3 rounded-lg text-base font-medium transition-colors ${location.pathname === '/' && window.location.hash === link.path
                                         ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
                                         : 'text-gray-300 hover:text-white hover:bg-white/5'
                                         }`}
                                 >
                                     {link.name}
-                                </Link>
+                                </button>
                             ))}
                             <div className="pt-4 px-3">
                                 <Link to="/register" className="w-full block py-3 text-center bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg text-white font-bold shadow-lg shadow-blue-500/25">Register Now</Link>

@@ -135,137 +135,6 @@ const themes = [
     }
 ];
 
-const Themes = () => {
-    const [selectedTheme, setSelectedTheme] = useState(null);
-
-    return (
-        <div className="pt-24 pb-20 px-6 max-w-7xl mx-auto relative">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-center mb-16"
-            >
-                <span className="text-blue-400 font-semibold tracking-wider uppercase">Problem Statements</span>
-                <h2 className="text-4xl md:text-5xl font-heading font-bold text-white mt-2 mb-6">
-                    Hackathon <span className="text-gradient">Themes</span>
-                </h2>
-                <p className="max-w-2xl mx-auto text-gray-400 text-lg">
-                    Choose a track that inspires you. Click on any theme to learn more and see project ideas.
-                </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {themes.map((theme, index) => (
-                    <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="group relative cursor-pointer"
-                        onClick={() => setSelectedTheme(theme)}
-                        layoutId={`card-${index}`}
-                    >
-                        <div className={`absolute inset-0 bg-gradient-to-br ${theme.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl blur-xl`} />
-                        <div className="glass-card p-8 h-full relative z-10 flex flex-col items-start hover:-translate-y-2 transition-transform duration-300 border border-white/5 group-hover:border-white/10">
-                            <div className="p-3 bg-white/5 rounded-lg mb-4 group-hover:scale-110 transition-transform duration-300">
-                                {theme.icon}
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
-                                {theme.title}
-                            </h3>
-                            <p className="text-gray-400 leading-relaxed text-sm">
-                                {theme.description}
-                            </p>
-                            <div className="mt-4 text-blue-400 text-sm font-semibold flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                Read More <span className="ml-1">→</span>
-                            </div>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
-            <AnimatePresence>
-                {selectedTheme && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setSelectedTheme(null)}
-                            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-                        >
-                            <divWrapper theme={selectedTheme} onClose={() => setSelectedTheme(null)} />
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
-        </div>
-    );
-};
-
-// Separated component to avoid hook issues if any, and for cleaner structure
-const divWrapper = ({ theme, onClose }) => {
-    return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="bg-gray-900 border border-gray-700 w-full max-w-2xl rounded-2xl p-6 md:p-10 relative shadow-2xl overflow-y-auto max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
-        >
-            <button
-                onClick={onClose}
-                className="absolute top-4 right-4 p-2 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors text-gray-400 hover:text-white"
-            >
-                <X size={24} />
-            </button>
-
-            <div className="flex items-center gap-4 mb-6">
-                <div className="p-4 bg-gray-800 rounded-xl">
-                    {theme.icon}
-                </div>
-                <div>
-                    <h3 className="text-3xl font-heading font-bold text-white">{theme.title}</h3>
-                    <span className="text-blue-400 text-sm font-semibold tracking-wider">CODESTORM 2026</span>
-                </div>
-            </div>
-
-            <div className="space-y-6">
-                <div>
-                    <h4 className="text-xl font-bold text-gray-200 mb-2 flex items-center gap-2">
-                        <Layers className="w-5 h-5 text-purple-400" /> Overview
-                    </h4>
-                    <p className="text-gray-400 leading-relaxed text-lg">
-                        {theme.details}
-                    </p>
-                </div>
-
-                <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
-                    <h4 className="text-xl font-bold text-gray-200 mb-4 flex items-center gap-2">
-                        <Lightbulb className="w-5 h-5 text-yellow-400" /> Project Ideas
-                    </h4>
-                    <ul className="space-y-3">
-                        {theme.ideas.map((idea, i) => (
-                            <li key={i} className="flex items-start gap-3 text-gray-300">
-                                <span className="mt-1.5 w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
-                                {idea}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                <div className="pt-4 border-t border-gray-800">
-                    <p className="text-sm text-gray-500 italic">
-                        * These ideas are just for inspiration. Feel free to build something unique!
-                    </p>
-                </div>
-            </div>
-        </motion.div>
-    )
-}
-
-// Fixed component export to include wrapper correctly
 const Modal = ({ theme, onClose }) => (
     <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -324,8 +193,7 @@ const Modal = ({ theme, onClose }) => (
     </motion.div>
 );
 
-// Redefine Themes to use Modal
-const ThemesFinal = () => {
+const Themes = () => {
     const [selectedTheme, setSelectedTheme] = useState(null);
 
     return (
@@ -392,4 +260,4 @@ const ThemesFinal = () => {
     );
 };
 
-export default ThemesFinal;
+export default Themes;

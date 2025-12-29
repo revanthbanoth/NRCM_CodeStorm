@@ -24,12 +24,18 @@ export default {
                 'fade-in': 'fadeIn 1s ease-out forwards',
                 'text-shimmer': 'text-shimmer 2.5s ease-out infinite alternate',
                 'gradient-xy': 'gradient-xy 15s ease infinite',
-                'spin-slow': 'spin 3s linear infinite',
-                'shine': 'shine 1.5s',
+                'spin-slow': 'spin 8s linear infinite',
+                'reverse-spin-slow': 'reverse-spin 12s linear infinite',
+                'shine': 'shine 2s infinite',
             },
             keyframes: {
                 shine: {
+                    '0%': { left: '-125%' },
                     '100%': { left: '125%' },
+                },
+                'reverse-spin': {
+                    'from': { transform: 'rotate(360deg)' },
+                    'to': { transform: 'rotate(0deg)' },
                 },
                 blob: {
                     '0%': { transform: 'translate(0px, 0px) scale(1)' },

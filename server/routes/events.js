@@ -4,6 +4,7 @@ const Registration = require('../models/Registration');
 const Idea = require('../models/Idea');
 const multer = require('multer');
 const path = require('path');
+const { protect, admin } = require('../middleware/authMiddleware');
 
 // Configure Multer for File Uploads
 const storage = multer.diskStorage({
@@ -74,7 +75,7 @@ router.get('/count', async (req, res) => {
 
 // @desc    Get all registrations (Admin)
 // @route   GET /api/events/registrations
-router.get('/registrations', async (req, res) => {
+router.get('/registrations', protect, admin, async (req, res) => {
     try {
         const registrations = await Registration.findAll({});
         res.json(registrations);
@@ -85,7 +86,7 @@ router.get('/registrations', async (req, res) => {
 
 // @desc    Get all ideas (Admin)
 // @route   GET /api/events/ideas
-router.get('/ideas', async (req, res) => {
+router.get('/ideas', protect, admin, async (req, res) => {
     try {
         const ideas = await Idea.findAll({});
         res.json(ideas);

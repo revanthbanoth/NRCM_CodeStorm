@@ -13,6 +13,7 @@ import Themes from './pages/Themes';
 import Register from './pages/Register';
 import IdeaSubmission from './pages/IdeaSubmission';
 import Schedule from './pages/Schedule';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/idea-submission" element={<IdeaSubmission />} />
           <Route path="/schedule" element={<Schedule />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
         <ToastContainer position="bottom-right" theme="dark" />
       </div>

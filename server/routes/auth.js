@@ -41,11 +41,21 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(`Login attempt for: ${email}`);
+
         const user = await User.findOne({ where: { email } });
 
-        if (user && (await user.matchPassword(password))) {
+        if (!user) {
+            console.log('User not found in database');
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        const isMatch = await user.matchPassword(password);
+        console.log(`Password match status: ${isMatch}`);
+
+        if (isMatch) {
             res.json({
-                _id: user.id, // Mapping id to _id for frontend compatibility
+                _id: user.id,
                 name: user.name,
                 email: user.email,
                 isAdmin: user.isAdmin,
@@ -55,6 +65,7 @@ router.post('/login', async (req, res) => {
             res.status(401).json({ message: 'Invalid email or password' });
         }
     } catch (error) {
+        console.error('Login error:', error.message);
         res.status(500).json({ message: error.message });
     }
 });
