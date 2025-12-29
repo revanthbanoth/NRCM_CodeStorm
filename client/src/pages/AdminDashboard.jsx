@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+
 const AdminDashboard = () => {
     const [registrations, setRegistrations] = useState([]);
     const [ideas, setIdeas] = useState([]);
@@ -15,8 +16,7 @@ const AdminDashboard = () => {
     const [loginData, setLoginData] = useState({ email: '', password: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
-
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -58,7 +58,7 @@ const AdminDashboard = () => {
         e.preventDefault();
         setAuthLoading(true);
         try {
-            const { data } = await axios.post(`${apiUrl}/api/auth/login`, loginData);
+            const { data } = await axios.post(`${API_BASE_URL}/api/auth/login`, loginData);
             if (data.isAdmin) {
                 localStorage.setItem('adminToken', data.token);
                 setIsLoggedIn(true);
