@@ -28,12 +28,15 @@ const AdminDashboard = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
 
-    // ✅ CORRECT API BASE URL
-    //const API_BASE_URL = import.meta.env.VITE_API_URL;
-    const apiUrl = API_BASE_URL || "https://nrcm-codestorm.onrender.com";
+    // ✅ SINGLE SOURCE OF TRUTH (IMPORTANT)
+    const API_BASE_URL =
+        import.meta.env.VITE_API_URL || 'https://nrcm-codestorm.onrender.com';
 
     const navigate = useNavigate();
 
+    // =========================
+    // AUTO LOGIN CHECK
+    // =========================
     useEffect(() => {
         const token = localStorage.getItem('adminToken');
         if (token) {
@@ -110,21 +113,16 @@ const AdminDashboard = () => {
         setIsLoggedIn(false);
         setRegistrations([]);
         setIdeas([]);
+        setLoading(false);
     };
 
     const filteredData =
         activeTab === 'registrations'
             ? registrations.filter(
                   (r) =>
-                      r.name
-                          ?.toLowerCase()
-                          .includes(searchTerm.toLowerCase()) ||
-                      r.email
-                          ?.toLowerCase()
-                          .includes(searchTerm.toLowerCase()) ||
-                      r.teamName
-                          ?.toLowerCase()
-                          .includes(searchTerm.toLowerCase())
+                      r.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      r.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      r.teamName?.toLowerCase().includes(searchTerm.toLowerCase())
               )
             : ideas.filter(
                   (i) =>
@@ -134,9 +132,7 @@ const AdminDashboard = () => {
                       i.teamName
                           ?.toLowerCase()
                           .includes(searchTerm.toLowerCase()) ||
-                      i.theme
-                          ?.toLowerCase()
-                          .includes(searchTerm.toLowerCase())
+                      i.theme?.toLowerCase().includes(searchTerm.toLowerCase())
               );
 
     // =========================
@@ -196,11 +192,7 @@ const AdminDashboard = () => {
                                 </label>
                                 <div className="relative mt-2">
                                     <input
-                                        type={
-                                            showPassword
-                                                ? 'text'
-                                                : 'password'
-                                        }
+                                        type={showPassword ? 'text' : 'password'}
                                         required
                                         value={loginData.password}
                                         onChange={(e) =>
