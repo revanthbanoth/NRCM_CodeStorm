@@ -8,9 +8,9 @@ const User = require('../models/User');
  * GENERATE JWT TOKEN
  * ===============================
  */
-const generateToken = (id, isAdmin = false) => {
+const generateToken = (payload) => {
     return jwt.sign(
-        { id, isAdmin },
+        payload,
         process.env.JWT_SECRET,
         { expiresIn: '30d' }
     );
@@ -26,13 +26,11 @@ router.post('/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        // Check existing user
         const userExists = await User.findOne({ where: { email } });
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Create user
         const user = await User.create({
             name,
             email,
@@ -40,13 +38,16 @@ router.post('/register', async (req, res) => {
             isAdmin: false
         });
 
-        // Response
         res.status(201).json({
             _id: user.id,
             name: user.name,
             email: user.email,
             isAdmin: false,
-            token: generateToken(user.id, false)
+            token: generateToken({
+                id: user.id,
+                email: user.email,
+                isAdmin: false
+            })
         });
 
     } catch (error) {
@@ -82,7 +83,11 @@ router.post('/login', async (req, res) => {
                 name: 'Admin',
                 email,
                 isAdmin: true,
-                token: generateToken('admin', true)
+                token: generateToken({
+                    id: 'admin',
+                    email,
+                    isAdmin: true
+                })
             });
         }
 
@@ -92,7 +97,6 @@ router.post('/login', async (req, res) => {
          * ===============================
          */
         const user = await User.findOne({ where: { email } });
-
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
@@ -102,13 +106,16 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        // Success response
         res.json({
             _id: user.id,
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin || false,
-            token: generateToken(user.id, user.isAdmin || false)
+            token: generateToken({
+                id: user.id,
+                email: user.email,
+                isAdmin: user.isAdmin || false
+            })
         });
 
     } catch (error) {
