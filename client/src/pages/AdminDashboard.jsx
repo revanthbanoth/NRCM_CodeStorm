@@ -20,7 +20,8 @@ const AdminDashboard = () => {
     const [authLoading, setAuthLoading] = useState(false);
 
     // ✅ USE RENDER BACKEND
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://nrcm-codestorm.onrender.com';
+    const apiUrl = "https://nrcm-codestorm.onrender.com";
+    //const apiUrl = import.meta.env.VITE_API_URL || 'https://nrcm-codestorm.onrender.com';
 
     // ===============================
     // AUTO LOGIN
