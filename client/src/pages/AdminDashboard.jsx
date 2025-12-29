@@ -20,7 +20,7 @@ const AdminDashboard = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+ const apiUrl = import.meta.env.VITE_API_URL;
 
   // 🔒 Restore session safely
   useEffect(() => {
