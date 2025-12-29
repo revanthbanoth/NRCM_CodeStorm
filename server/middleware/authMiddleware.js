@@ -2,50 +2,52 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const protect = async (req, res, next) => {
-    let token;
+  let token;
 
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
-        try {
-            token = req.headers.authorization.split(' ')[1];
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            // ✅ ADMIN TOKEN (NO DB LOOKUP)
-            if (decoded.id === 'admin' && decoded.isAdmin === true) {
-                req.user = {
-                    id: 'admin',
-                    isAdmin: true,
-                };
-                return next();
-            }
+      // 🔴 SPECIAL CASE: ADMIN (ENV BASED)
+      if (decoded.id === 'admin') {
+        req.user = {
+          id: 'admin',
+          name: 'Admin',
+          email: process.env.ADMIN_EMAIL,
+          isAdmin: true,
+        };
+        return next();
+      }
 
-            // ✅ NORMAL USER
-            const user = await User.findByPk(decoded.id);
-            if (!user) {
-                return res.status(401).json({ message: 'User not found' });
-            }
+      // 🔵 NORMAL USER
+      const user = await User.findByPk(decoded.id);
+      if (!user) {
+        return res.status(401).json({ message: 'User not found' });
+      }
 
-            req.user = user;
-            next();
-        } catch (error) {
-            return res.status(401).json({ message: 'Not authorized, token failed' });
-        }
+      req.user = user;
+      next();
+    } catch (error) {
+      return res.status(401).json({ message: 'Not authorized, token failed' });
     }
+  }
 
-    if (!token) {
-        return res.status(401).json({ message: 'Not authorized, no token' });
-    }
+  if (!token) {
+    return res.status(401).json({ message: 'Not authorized, no token' });
+  }
 };
 
 const admin = (req, res, next) => {
-    if (req.user && req.user.isAdmin === true) {
-        next();
-    } else {
-        res.status(403).json({ message: 'Admin access denied' });
-    }
+  if (req.user && req.user.isAdmin === true) {
+    next();
+  } else {
+    res.status(403).json({ message: 'Admin access denied' });
+  }
 };
 
 module.exports = { protect, admin };
