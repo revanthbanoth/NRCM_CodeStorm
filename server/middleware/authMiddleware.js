@@ -12,39 +12,42 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // 🔥 ADMIN LOGIN (EMAIL BASED – CORRECT)
-      if (decoded.isAdmin === true) {
+      // 🔴 ADMIN (ENV BASED)
+      if (decoded.id === 'admin' || decoded.isAdmin === true) {
         req.user = {
-          id: decoded.id,
-          email: decoded.email,
+          id: 'admin',
+          email: decoded.email || process.env.ADMIN_EMAIL,
           isAdmin: true,
         };
         return next();
       }
 
-      // 👤 NORMAL USER
+      // 🔵 NORMAL USER
       const user = await User.findByPk(decoded.id);
       if (!user) {
         return res.status(401).json({ message: 'User not found' });
       }
 
-      req.user = user;
+      req.user = {
+        id: user.id,
+        email: user.email,
+        isAdmin: Boolean(user.isAdmin),
+      };
+
       next();
     } catch (error) {
       return res.status(401).json({ message: 'Not authorized, token failed' });
     }
-  }
-
-  if (!token) {
+  } else {
     return res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
 
 const admin = (req, res, next) => {
-  if (req.user && req.user.isAdmin === true) {
+  if (req.user && req.user.isAdmin) {
     next();
   } else {
-    res.status(403).json({ message: 'Admin access denied' });
+    return res.status(403).json({ message: 'Admin access denied' });
   }
 };
 
