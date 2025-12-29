@@ -140,7 +140,16 @@ const AdminDashboard = () => {
     // ---------------- DASHBOARD ----------------
     return (
         <div className="min-h-screen bg-[#050505] text-white p-10">
-            <button onClick={handleLogout} className="bg-red-600 px-4 py-2 rounded mb-6">Logout</button>
+            <button
+  onClick={handleLogout}
+  className="fixed bottom-6 right-6 z-50 px-6 py-3 
+             bg-red-600 hover:bg-red-700 
+             text-white font-black uppercase tracking-widest 
+             rounded-xl shadow-lg shadow-red-600/30 
+             transition-all active:scale-95"
+>
+  Logout
+</button>
 
             <pre className="text-green-400 text-sm">
                 {JSON.stringify(activeTab === 'registrations' ? registrations : ideas, null, 2)}
