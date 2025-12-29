@@ -8,7 +8,7 @@ const { protect } = require('../middleware/authMiddleware');
 
 /**
  * ==================================================
- * Multer Configuration (MEMORY STORAGE – Render SAFE)
+ * MULTER CONFIG (MEMORY STORAGE – RENDER SAFE)
  * ==================================================
  */
 const upload = multer({
@@ -25,10 +25,20 @@ const upload = multer({
 });
 
 /**
- * ===============================
+ * ==================================================
+ * HEALTH CHECK (VERY IMPORTANT)
+ * GET /api/events/health
+ * ==================================================
+ */
+router.get('/health', (req, res) => {
+    res.json({ status: 'Events API is running ✅' });
+});
+
+/**
+ * ==================================================
  * REGISTER FOR EVENT
  * POST /api/events/register
- * ===============================
+ * ==================================================
  */
 router.post('/register', async (req, res) => {
     try {
@@ -43,10 +53,10 @@ router.post('/register', async (req, res) => {
 });
 
 /**
- * ===============================
+ * ==================================================
  * SUBMIT IDEA
  * POST /api/events/idea
- * ===============================
+ * ==================================================
  */
 router.post('/idea', upload.single('pptFile'), async (req, res) => {
     try {
@@ -69,10 +79,10 @@ router.post('/idea', upload.single('pptFile'), async (req, res) => {
 });
 
 /**
- * ===============================
+ * ==================================================
  * COUNT REGISTRATIONS
  * GET /api/events/count
- * ===============================
+ * ==================================================
  */
 router.get('/count', async (req, res) => {
     try {
@@ -84,15 +94,16 @@ router.get('/count', async (req, res) => {
 });
 
 /**
- * ===============================
+ * ==================================================
  * ADMIN DASHBOARD – REGISTRATIONS
  * GET /api/events/registrations
- * ===============================
- * 🔥 admin middleware REMOVED (IMPORTANT)
+ * ==================================================
  */
 router.get('/registrations', protect, async (req, res) => {
     try {
-        const registrations = await Registration.findAll();
+        const registrations = await Registration.findAll({
+            order: [['createdAt', 'DESC']]
+        });
         res.json(registrations);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -100,15 +111,16 @@ router.get('/registrations', protect, async (req, res) => {
 });
 
 /**
- * ===============================
+ * ==================================================
  * ADMIN DASHBOARD – IDEAS
  * GET /api/events/ideas
- * ===============================
- * 🔥 admin middleware REMOVED (IMPORTANT)
+ * ==================================================
  */
 router.get('/ideas', protect, async (req, res) => {
     try {
-        const ideas = await Idea.findAll();
+        const ideas = await Idea.findAll({
+            order: [['createdAt', 'DESC']]
+        });
         res.json(ideas);
     } catch (error) {
         res.status(500).json({ message: error.message });
