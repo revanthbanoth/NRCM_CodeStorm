@@ -6,64 +6,77 @@ const multer = require('multer');
 const path = require('path');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// Configure Multer for File Uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    }
-});
-
+/**
+ * ==================================================
+ * Multer Configuration (MEMORY STORAGE – Render SAFE)
+ * ==================================================
+ */
 const upload = multer({
-    storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
     fileFilter: (req, file, cb) => {
-        const filetypes = /ppt|pptx|pdf/;
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = filetypes.test(file.mimetype);
-        if (extname && mimetype) {
-            return cb(null, true);
-        } else {
-            cb(new Error('Only PPT, PPTX, and PDF files are allowed!'));
-        }
+        const allowed = /ppt|pptx|pdf/;
+        const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+        const mime = allowed.test(file.mimetype);
+
+        if (ext && mime) cb(null, true);
+        else cb(new Error('Only PPT, PPTX, and PDF files are allowed'));
     }
 });
 
-// @desc    Register for event
-// @route   POST /api/events/register
+/**
+ * ===============================
+ * REGISTER FOR EVENT
+ * POST /api/events/register
+ * ===============================
+ */
 router.post('/register', async (req, res) => {
     try {
-        const { user, ...rest } = req.body;
-        const registrationData = { ...rest };
-        if (user) registrationData.userId = user;
-
-        const registration = await Registration.create(registrationData);
-        res.status(201).json(registration);
+        const registration = await Registration.create(req.body);
+        res.status(201).json({
+            success: true,
+            data: registration
+        });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
 
-// @desc    Submit Idea
-// @route   POST /api/events/idea
+/**
+ * ===============================
+ * SUBMIT IDEA
+ * POST /api/events/idea
+ * ===============================
+ * NOTE:
+ * We store ONLY metadata (name, type, size)
+ * NOT the actual file (Render safe)
+ */
 router.post('/idea', upload.single('pptFile'), async (req, res) => {
     try {
-        const { user, ...rest } = req.body; // user might be undefined if not sent, which is fine
-        const ideaData = { ...rest };
-        if (user) ideaData.userId = user;
-        if (req.file) ideaData.pptPath = req.file.path.replace(/\\/g, "/"); // Store path with forward slashes
+        const ideaData = {
+            ...req.body,
+            pptName: req.file ? req.file.originalname : null,
+            pptType: req.file ? req.file.mimetype : null,
+            pptSize: req.file ? req.file.size : null
+        };
 
         const idea = await Idea.create(ideaData);
-        res.status(201).json(idea);
+
+        res.status(201).json({
+            success: true,
+            data: idea
+        });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
 
-// @desc    Get registration count
-// @route   GET /api/events/count
+/**
+ * ===============================
+ * COUNT REGISTRATIONS
+ * GET /api/events/count
+ * ===============================
+ */
 router.get('/count', async (req, res) => {
     try {
         const count = await Registration.count();
@@ -73,22 +86,30 @@ router.get('/count', async (req, res) => {
     }
 });
 
-// @desc    Get all registrations (Admin)
-// @route   GET /api/events/registrations
+/**
+ * ===============================
+ * ADMIN – GET REGISTRATIONS
+ * GET /api/events/registrations
+ * ===============================
+ */
 router.get('/registrations', protect, admin, async (req, res) => {
     try {
-        const registrations = await Registration.findAll({});
+        const registrations = await Registration.findAll();
         res.json(registrations);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
-// @desc    Get all ideas (Admin)
-// @route   GET /api/events/ideas
+/**
+ * ===============================
+ * ADMIN – GET IDEAS
+ * GET /api/events/ideas
+ * ===============================
+ */
 router.get('/ideas', protect, admin, async (req, res) => {
     try {
-        const ideas = await Idea.findAll({});
+        const ideas = await Idea.findAll();
         res.json(ideas);
     } catch (error) {
         res.status(500).json({ message: error.message });
