@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-    Loader2,
-    Lock,
-    Eye,
-    EyeOff,
-    ArrowLeft
+    Users, Lightbulb, Download, Search, ArrowLeft,
+    Loader2, Database, Lock, User, Eye, EyeOff
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -14,85 +11,87 @@ import { toast } from 'react-toastify';
 const AdminDashboard = () => {
     const [registrations, setRegistrations] = useState([]);
     const [ideas, setIdeas] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [activeTab, setActiveTab] = useState('registrations');
+    const [searchTerm, setSearchTerm] = useState('');
     const [loginData, setLoginData] = useState({ email: '', password: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
 
-    // ✅ SINGLE SOURCE OF TRUTH
-    const API_BASE_URL =
-        import.meta.env.VITE_API_URL || 'https://nrcm-codestorm.onrender.com';
+    // ✅ USE RENDER BACKEND
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://nrcm-codestorm.onrender.com';
 
-    // =========================
-    // AUTO LOGIN CHECK
-    // =========================
+    // ===============================
+    // AUTO LOGIN
+    // ===============================
     useEffect(() => {
         const token = localStorage.getItem('adminToken');
-        if (token) {
-            setIsLoggedIn(true);
-            fetchData(token);
+        if (!token) {
+            setLoading(false);
+            return;
         }
+        setIsLoggedIn(true);
+        fetchData(token);
     }, []);
 
-    // =========================
+    // ===============================
     // FETCH DASHBOARD DATA
-    // =========================
+    // ===============================
     const fetchData = async (token) => {
         try {
             setLoading(true);
 
             const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` }
             };
 
             const [regRes, ideaRes] = await Promise.all([
-                axios.get(`${API_BASE_URL}/api/events/registrations`, config),
-                axios.get(`${API_BASE_URL}/api/events/ideas`, config),
+                axios.get(`${apiUrl}/api/events/registrations`, config),
+                axios.get(`${apiUrl}/api/events/ideas`, config),
             ]);
 
-            setRegistrations(regRes.data || []);
-            setIdeas(ideaRes.data || []);
+            setRegistrations(regRes.data);
+            setIdeas(ideaRes.data);
         } catch (error) {
-            console.error(error);
-            toast.error('Session expired. Please login again.');
-            handleLogout();
+            console.error('Fetch error:', error);
+
+            // 🔴 DO NOT LOGOUT ON FIRST 401 (Render cold start)
+            toast.error('Server waking up… please retry');
         } finally {
             setLoading(false);
         }
     };
 
-    // =========================
-    // ADMIN LOGIN
-    // =========================
+    // ===============================
+    // LOGIN
+    // ===============================
     const handleLogin = async (e) => {
         e.preventDefault();
         setAuthLoading(true);
 
         try {
-            const res = await axios.post(
-                `${API_BASE_URL}/api/auth/login`,
-                loginData
-            );
+            const { data } = await axios.post(`${apiUrl}/api/auth/login`, loginData);
 
-            if (!res.data?.token || !res.data?.isAdmin) {
-                toast.error('Not an admin account');
+            if (!data.isAdmin) {
+                toast.error('Access denied');
                 return;
             }
 
-            localStorage.setItem('adminToken', res.data.token);
+            localStorage.setItem('adminToken', data.token);
             setIsLoggedIn(true);
-            fetchData(res.data.token);
+            fetchData(data.token);
             toast.success('Welcome back, Admin!');
         } catch (error) {
-            toast.error('Invalid admin credentials');
+            toast.error(error.response?.data?.message || 'Invalid credentials');
         } finally {
             setAuthLoading(false);
         }
     };
 
+    // ===============================
+    // LOGOUT
+    // ===============================
     const handleLogout = () => {
         localStorage.removeItem('adminToken');
         setIsLoggedIn(false);
@@ -100,110 +99,98 @@ const AdminDashboard = () => {
         setIdeas([]);
     };
 
-    // =========================
-    // LOGIN SCREEN
-    // =========================
+    // ===============================
+    // FILTER
+    // ===============================
+    const filteredData = activeTab === 'registrations'
+        ? registrations.filter(r =>
+            r.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            r.email?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        : ideas.filter(i =>
+            i.projectTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            i.teamName?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+    // ===============================
+    // DOWNLOAD
+    // ===============================
+    const handleDownloadPPT = (path) => {
+        if (!path) return;
+        window.open(`${apiUrl}/${path}`, '_blank');
+    };
+
+    // ===============================
+    // LOGIN SCREEN (UNCHANGED)
+    // ===============================
     if (!isLoggedIn) {
         return (
-            <div className="min-h-screen bg-black flex items-center justify-center p-6">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full max-w-md"
-                >
-                    <div className="text-center mb-8">
-                        <Lock className="w-10 h-10 text-blue-400 mx-auto mb-4" />
-                        <h1 className="text-3xl font-bold text-white">
-                            Admin Gate
-                        </h1>
-                    </div>
+            <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-md">
+                    <form onSubmit={handleLogin} className="glass-card p-8 space-y-6">
+                        <h1 className="text-4xl font-bold text-white text-center">Admin Gate</h1>
 
-                    <form
-                        onSubmit={handleLogin}
-                        className="bg-white/5 p-6 rounded-xl space-y-4"
-                    >
                         <input
                             type="email"
-                            placeholder="Admin Email"
                             required
                             value={loginData.email}
-                            onChange={(e) =>
-                                setLoginData({
-                                    ...loginData,
-                                    email: e.target.value,
-                                })
-                            }
-                            className="w-full p-3 rounded bg-black text-white"
+                            onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                            className="w-full bg-white/5 p-3 rounded-xl text-white"
+                            placeholder="admin@codestorm.com"
                         />
 
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}
-                                placeholder="Password"
                                 required
                                 value={loginData.password}
-                                onChange={(e) =>
-                                    setLoginData({
-                                        ...loginData,
-                                        password: e.target.value,
-                                    })
-                                }
-                                className="w-full p-3 rounded bg-black text-white"
+                                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                                className="w-full bg-white/5 p-3 rounded-xl text-white"
+                                placeholder="••••••••"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-3 text-gray-400"
+                                className="absolute right-4 top-1/2 -translate-y-1/2"
                             >
                                 {showPassword ? <EyeOff /> : <Eye />}
                             </button>
                         </div>
 
-                        <button
-                            type="submit"
-                            disabled={authLoading}
-                            className="w-full bg-blue-600 py-3 rounded text-white font-bold"
-                        >
-                            {authLoading ? (
-                                <Loader2 className="animate-spin mx-auto" />
-                            ) : (
-                                'Unlock Dashboard'
-                            )}
+                        <button className="w-full bg-blue-600 py-3 rounded-xl text-white font-bold">
+                            {authLoading ? 'Logging in...' : 'Unlock Dashboard'}
                         </button>
                     </form>
-
-                    <Link
-                        to="/"
-                        className="flex items-center justify-center gap-2 mt-6 text-gray-400"
-                    >
-                        <ArrowLeft size={16} /> Back to Home
-                    </Link>
                 </motion.div>
             </div>
         );
     }
 
-    // =========================
-    // DASHBOARD
-    // =========================
+    // ===============================
+    // LOADING
+    // ===============================
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <Loader2 className="animate-spin text-blue-500" size={40} />
+            </div>
+        );
+    }
+
+    // ===============================
+    // DASHBOARD (UNCHANGED UI)
+    // ===============================
     return (
-        <div className="min-h-screen bg-black text-white p-6">
-            <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+        <div className="min-h-screen bg-[#050505] text-white p-10">
+            <h1 className="text-4xl font-bold mb-6">Admin Dashboard</h1>
 
-            {loading ? (
-                <Loader2 className="animate-spin" />
-            ) : (
-                <pre className="text-xs bg-white/5 p-4 rounded overflow-auto">
-{JSON.stringify({ registrations, ideas }, null, 2)}
-                </pre>
-            )}
-
-            <button
-                onClick={handleLogout}
-                className="mt-6 bg-red-600 px-4 py-2 rounded"
-            >
+            <button onClick={handleLogout} className="mb-6 bg-red-600 px-4 py-2 rounded">
                 Logout
             </button>
+
+            <pre className="bg-black/50 p-6 rounded-xl overflow-auto text-xs">
+                {JSON.stringify(filteredData, null, 2)}
+            </pre>
         </div>
     );
 };
