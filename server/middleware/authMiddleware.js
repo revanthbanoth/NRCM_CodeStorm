@@ -12,17 +12,17 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // 🔴 ADMIN (ENV BASED)
-      if (decoded.id === 'admin' || decoded.isAdmin === true) {
+      // ✅ ENV ADMIN (NO DB REQUIRED)
+      if (decoded.id === 'admin') {
         req.user = {
           id: 'admin',
-          email: decoded.email || process.env.ADMIN_EMAIL,
+          email: process.env.ADMIN_EMAIL,
           isAdmin: true,
         };
         return next();
       }
 
-      // 🔵 NORMAL USER
+      // ✅ NORMAL USER
       const user = await User.findByPk(decoded.id);
       if (!user) {
         return res.status(401).json({ message: 'User not found' });
@@ -35,19 +35,19 @@ const protect = async (req, res, next) => {
       };
 
       next();
-    } catch (error) {
-      return res.status(401).json({ message: 'Not authorized, token failed' });
+    } catch (err) {
+      return res.status(401).json({ message: 'Token invalid' });
     }
   } else {
-    return res.status(401).json({ message: 'Not authorized, no token' });
+    return res.status(401).json({ message: 'No token provided' });
   }
 };
 
 const admin = (req, res, next) => {
-  if (req.user && req.user.isAdmin) {
+  if (req.user?.isAdmin) {
     next();
   } else {
-    return res.status(403).json({ message: 'Admin access denied' });
+    return res.status(403).json({ message: 'Admin only route' });
   }
 };
 
