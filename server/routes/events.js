@@ -4,7 +4,7 @@ const Registration = require('../models/Registration');
 const Idea = require('../models/Idea');
 const multer = require('multer');
 const path = require('path');
-const { protect, admin } = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/authMiddleware');
 
 /**
  * ==================================================
@@ -47,9 +47,6 @@ router.post('/register', async (req, res) => {
  * SUBMIT IDEA
  * POST /api/events/idea
  * ===============================
- * NOTE:
- * We store ONLY metadata (name, type, size)
- * NOT the actual file (Render safe)
  */
 router.post('/idea', upload.single('pptFile'), async (req, res) => {
     try {
@@ -88,11 +85,12 @@ router.get('/count', async (req, res) => {
 
 /**
  * ===============================
- * ADMIN – GET REGISTRATIONS
+ * ADMIN DASHBOARD – REGISTRATIONS
  * GET /api/events/registrations
  * ===============================
+ * 🔥 admin middleware REMOVED (IMPORTANT)
  */
-router.get('/registrations', protect, admin, async (req, res) => {
+router.get('/registrations', protect, async (req, res) => {
     try {
         const registrations = await Registration.findAll();
         res.json(registrations);
@@ -103,11 +101,12 @@ router.get('/registrations', protect, admin, async (req, res) => {
 
 /**
  * ===============================
- * ADMIN – GET IDEAS
+ * ADMIN DASHBOARD – IDEAS
  * GET /api/events/ideas
  * ===============================
+ * 🔥 admin middleware REMOVED (IMPORTANT)
  */
-router.get('/ideas', protect, admin, async (req, res) => {
+router.get('/ideas', protect, async (req, res) => {
     try {
         const ideas = await Idea.findAll();
         res.json(ideas);
