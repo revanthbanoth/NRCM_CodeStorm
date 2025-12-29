@@ -29,7 +29,7 @@ const AdminDashboard = () => {
     const [authLoading, setAuthLoading] = useState(false);
 
     // ✅ CORRECT API BASE URL
-    const API_BASE_URL = import.meta.env.VITE_API_URL;
+    //const API_BASE_URL = import.meta.env.VITE_API_URL;
     const apiUrl = API_BASE_URL || "https://nrcm-codestorm.onrender.com";
 
     const navigate = useNavigate();
