@@ -13,7 +13,7 @@ const { protect } = require('../middleware/authMiddleware');
  */
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         const allowed = /ppt|pptx|pdf/;
         const ext = allowed.test(path.extname(file.originalname).toLowerCase());
@@ -27,7 +27,6 @@ const upload = multer({
 /**
  * ==================================================
  * HEALTH CHECK
- * GET /api/events/health
  * ==================================================
  */
 router.get('/health', (req, res) => {
@@ -36,17 +35,13 @@ router.get('/health', (req, res) => {
 
 /**
  * ==================================================
- * REGISTER FOR EVENT
- * POST /api/events/register
+ * REGISTER
  * ==================================================
  */
 router.post('/register', async (req, res) => {
     try {
         const registration = await Registration.create(req.body);
-        res.status(201).json({
-            success: true,
-            data: registration
-        });
+        res.status(201).json({ success: true, data: registration });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -55,24 +50,19 @@ router.post('/register', async (req, res) => {
 /**
  * ==================================================
  * SUBMIT IDEA
- * POST /api/events/idea
  * ==================================================
  */
 router.post('/idea', upload.single('pptFile'), async (req, res) => {
     try {
         const ideaData = {
             ...req.body,
-            pptName: req.file ? req.file.originalname : null,
-            pptType: req.file ? req.file.mimetype : null,
-            pptSize: req.file ? req.file.size : null
+            pptName: req.file?.originalname || null,
+            pptType: req.file?.mimetype || null,
+            pptSize: req.file?.size || null
         };
 
         const idea = await Idea.create(ideaData);
-
-        res.status(201).json({
-            success: true,
-            data: idea
-        });
+        res.status(201).json({ success: true, data: idea });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -80,8 +70,7 @@ router.post('/idea', upload.single('pptFile'), async (req, res) => {
 
 /**
  * ==================================================
- * COUNT REGISTRATIONS
- * GET /api/events/count
+ * COUNT
  * ==================================================
  */
 router.get('/count', async (req, res) => {
@@ -95,14 +84,12 @@ router.get('/count', async (req, res) => {
 
 /**
  * ==================================================
- * ADMIN DASHBOARD – REGISTRATIONS
- * GET /api/events/registrations
+ * ADMIN – REGISTRATIONS
  * ==================================================
  */
 router.get('/registrations', protect, async (req, res) => {
     try {
-        // OPTIONAL: admin-only safety check
-        if (!req.user || req.user.role !== 'admin') {
+        if (req.user.role !== 'admin') {
             return res.status(403).json({ message: 'Admin access only' });
         }
 
@@ -118,14 +105,12 @@ router.get('/registrations', protect, async (req, res) => {
 
 /**
  * ==================================================
- * ADMIN DASHBOARD – IDEAS
- * GET /api/events/ideas
+ * ADMIN – IDEAS
  * ==================================================
  */
 router.get('/ideas', protect, async (req, res) => {
     try {
-        // OPTIONAL: admin-only safety check
-        if (!req.user || req.user.role !== 'admin') {
+        if (req.user.role !== 'admin') {
             return res.status(403).json({ message: 'Admin access only' });
         }
 
