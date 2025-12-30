@@ -15,12 +15,10 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ Database connected');
-    await sequelize.sync();
-    console.log('✅ Models synced');
-  } catch (err) {
-    console.error('❌ DB Error:', err.message);
-    throw err;
+    console.log('✅ TiDB Connected');
+  } catch (error) {
+    console.error('❌ DB Connection Failed:', error);
+    process.exit(1);
   }
 };
 
