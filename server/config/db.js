@@ -1,13 +1,6 @@
 const { Sequelize } = require('sequelize');
-const dotenv = require('dotenv');
+require('dotenv').config();
 
-dotenv.config();
-
-/**
- * =========================================
- * TiDB Cloud - DATABASE_URL connection
- * =========================================
- */
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'mysql',
   logging: false,
@@ -22,14 +15,15 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ Connected to TiDB Cloud successfully');
+    console.log('✅ Connected to TiDB Cloud');
 
-    await sequelize.sync(); // keep simple
+    await sequelize.sync(); // IMPORTANT
     console.log('✅ Models synced');
   } catch (error) {
-    console.error('❌ Unable to connect to the database:', error);
-    process.exit(1); // stop server if DB fails
+    console.error('❌ DB connection failed:', error);
+    process.exit(1);
   }
 };
 
-module.exports = { sequelize, connectDB };
+module.exports = sequelize;   // ⚠️ EXPORT ONLY sequelize
+module.exports.connectDB = connectDB;
