@@ -98,11 +98,12 @@ const AdminDashboard = () => {
             r.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
             r.teamName?.toLowerCase().includes(searchTerm.toLowerCase())
         )
-        : ideas.filter(i =>
-            i.projectTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            i.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            i.theme.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+       : ideas.filter(i =>
+  i.projectTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  i.teamName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  i.leaderEmail?.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
 
     const handleDownloadPPT = (path) => {
         if (!path) return;
