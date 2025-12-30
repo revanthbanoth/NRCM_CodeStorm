@@ -1,116 +1,33 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
-
-// Models (DO NOT CHANGE)
 const Registration = require('../models/Registration');
-const Idea = require('../models/Idea');
-const { protect } = require('../middleware/authMiddleware');
 
-/* ==================================================
-   MULTER CONFIG (RENDER SAFE)
-================================================== */
-const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-    fileFilter: (req, file, cb) => {
-        const allowed = /ppt|pptx|pdf/;
-        const ext = allowed.test(path.extname(file.originalname).toLowerCase());
-        const mime = allowed.test(file.mimetype);
-        if (ext && mime) cb(null, true);
-        else cb(new Error('Only PPT, PPTX, PDF allowed'));
-    }
-});
-
-/* ==================================================
-   HEALTH CHECK
-================================================== */
+// Health check
 router.get('/health', (req, res) => {
-    res.json({ status: 'Events API is running ✅' });
+  res.json({ status: 'OK' });
 });
 
-/* ==================================================
-   REGISTER EVENT (DO NOT TOUCH)
-================================================== */
+// Register event (already working)
 router.post('/register', async (req, res) => {
-    try {
-        const registration = await Registration.create(req.body);
-        res.status(201).json(registration);
-    } catch (error) {
-        console.error('Register error:', error);
-        res.status(400).json({ message: error.message });
-    }
-});
-
-/* ==================================================
-   SUBMIT IDEA (✅ FIXED HERE ONLY)
-================================================== */
-router.post('/idea', upload.single('file'), async (req, res) => {
-    try {
-        const ideaData = {
-            ...req.body,
-            pptName: req.file ? req.file.originalname : null,
-            pptType: req.file ? req.file.mimetype : null,
-            pptSize: req.file ? req.file.size : null
-        };
-
-        const idea = await Idea.create(ideaData);
-        res.status(201).json(idea);
-    } catch (error) {
-        console.error('Idea submit error:', error);
-        res.status(400).json({ message: error.message });
-    }
-});
-
-/* ==================================================
-   COUNT REGISTRATIONS
-================================================== */
-router.get('/count', async (req, res) => {
-    try {
-        const count = await Registration.count();
-        res.json({ count });
-    } catch (error) {
-        console.error('Count error:', error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
-/* ==================================================
-   ADMIN – REGISTRATIONS (TOKEN REQUIRED)
-================================================== */
-router.get('/registrations', protect, async (req, res) => {
-    try {
-        const registrations = await Registration.findAll();
-        res.json(registrations);
-    } catch (error) {
-        console.error('Registrations fetch error:', error);
-        res.status(500).json({ message: 'Failed to fetch registrations' });
-    }
-});
-
-/* ==================================================
-   ADMIN – IDEAS (TOKEN REQUIRED)
-================================================== */
-router.get('/ideas', protect, async (req, res) => {
   try {
-    console.log('✅ Fetching ideas for admin:', req.user?.id);
-
-    const ideas = await Idea.findAll({
-      order: [['createdAt', 'DESC']]
-    });
-
-    console.log(`✅ Ideas found: ${ideas.length}`);
-    res.status(200).json(ideas);
-
-  } catch (error) {
-    console.error('❌ Ideas fetch error:', error);
-    res.status(500).json({
-      message: 'Ideas fetch failed',
-      error: error.message
-    });
+    const data = await Registration.create(req.body);
+    res.status(201).json(data);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 
+// ✅ PUBLIC – GET ALL REGISTRATIONS (NO AUTH)
+router.get('/registrations', async (req, res) => {
+  try {
+    const registrations = await Registration.findAll({
+      order: [['createdAt', 'DESC']]
+    });
+    res.json(registrations);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch registrations' });
+  }
+});
 
 module.exports = router;
