@@ -30,29 +30,30 @@ const AdminDashboard = () => {
     }, []);
 
     const fetchData = async (token) => {
-        setLoading(true);
-        try {
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            const [regRes, ideaRes] = await Promise.all([
-                axios.get(`${apiUrl}/api/events/registrations`, config),
-                axios.get(`${apiUrl}/api/events/ideas`, config)
-            ]);
-            setRegistrations(regRes.data);
-            setIdeas(ideaRes.data);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            if (error.response?.status === 401) {
-                handleLogout();
-                toast.error("Session expired. Please login again.");
-            } else {
-                toast.error("Failed to load dashboard data");
-            }
-        } finally {
-            setLoading(false);
-        }
+  setLoading(true);
+  try {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
     };
+    const [regRes, ideaRes] = await Promise.all([
+      axios.get(`${apiUrl}/api/events/registrations`, config),
+      axios.get(`${apiUrl}/api/events/ideas`, config)
+    ]);
+    setRegistrations(regRes.data);
+    setIdeas(ideaRes.data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    if (error.response?.status === 401) {
+      handleLogout();
+      toast.error("Session expired. Please login again.");
+    } else {
+      toast.error("Failed to load dashboard data");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
