@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
+const { sequelize } = require('../config/db');
 
 const Idea = sequelize.define(
     'Idea',
@@ -10,7 +10,7 @@ const Idea = sequelize.define(
             autoIncrement: true
         },
         userId: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             allowNull: true
         },
         teamName: {
@@ -43,8 +43,8 @@ const Idea = sequelize.define(
         }
     },
     {
-        tableName: 'Ideas',   // ✅ EXACT DB TABLE NAME
-        timestamps: false     // ✅ VERY IMPORTANT
+        tableName: 'Ideas',
+        timestamps: false
     }
 );
 
