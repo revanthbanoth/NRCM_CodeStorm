@@ -1,74 +1,105 @@
 const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
+const router = express.Router();
+const multer = require('multer');
 const path = require('path');
 
-// Load env variables
-dotenv.config();
+// ✅ IMPORTANT: file names must MATCH exactly (case-sensitive)
+const Registration = require('../models/Registration');
+const Idea = require('../models/Idea');
+const { protect } = require('../middleware/authMiddleware');
 
-// Import DB
-const db = require('./config/db');
-
-// Import routes
-const authRoutes = require('./routes/auth');
-const eventRoutes = require('./routes/events');
-
-const app = express();
-
-/* ================================
-   🌐 MIDDLEWARES
-================================ */
-
-// CORS (IMPORTANT for Vercel → Render)
-app.use(
-    cors({
-        origin: [
-            'http://localhost:5173',
-            'http://localhost:3000',
-            'https://nrcm-code-storm.vercel.app'
-        ],
-        credentials: true
-    })
-);
-
-// Body parsers
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-/* ================================
-   🛣️ ROUTES
-================================ */
-
-app.get('/', (req, res) => {
-    res.send('NRCM CodeStorm Backend is running 🚀');
+/* ==================================================
+   MULTER CONFIG (RENDER SAFE)
+================================================== */
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    fileFilter: (req, file, cb) => {
+        const allowed = /ppt|pptx|pdf/;
+        const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+        const mime = allowed.test(file.mimetype);
+        if (ext && mime) cb(null, true);
+        else cb(new Error('Only PPT, PPTX, PDF allowed'));
+    }
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/events', eventRoutes);
-
-/* ================================
-   ❌ ERROR HANDLER (SAFE)
-================================ */
-app.use((err, req, res, next) => {
-    console.error('Global Error:', err.message);
-    res.status(500).json({
-        message: 'Internal Server Error'
-    });
+/* ==================================================
+   HEALTH CHECK
+================================================== */
+router.get('/health', (req, res) => {
+    res.json({ status: 'Events API is running ✅' });
 });
 
-/* ================================
-   🟢 START SERVER
-================================ */
+/* ==================================================
+   REGISTER EVENT
+================================================== */
+router.post('/register', async (req, res) => {
+    try {
+        const registration = await Registration.create(req.body);
+        res.status(201).json(registration);
+    } catch (error) {
+        console.error('Register error:', error);
+        res.status(400).json({ message: error.message });
+    }
+});
 
-const PORT = process.env.PORT || 5000;
+/* ==================================================
+   SUBMIT IDEA
+================================================== */
+router.post('/idea', upload.single('pptFile'), async (req, res) => {
+    try {
+        const ideaData = {
+            ...req.body,
+            pptName: req.file ? req.file.originalname : null,
+            pptType: req.file ? req.file.mimetype : null,
+            pptSize: req.file ? req.file.size : null
+        };
 
-db.sync()
-    .then(() => {
-        console.log('✅ Database connected & synced');
-        app.listen(PORT, () => {
-            console.log(`🚀 Server running on port ${PORT}`);
-        });
-    })
-    .catch((err) => {
-        console.error('❌ DB connection failed:', err);
-    });
+        const idea = await Idea.create(ideaData);
+        res.status(201).json(idea);
+    } catch (error) {
+        console.error('Idea submit error:', error);
+        res.status(400).json({ message: error.message });
+    }
+});
+
+/* ==================================================
+   COUNT REGISTRATIONS
+================================================== */
+router.get('/count', async (req, res) => {
+    try {
+        const count = await Registration.count();
+        res.json({ count });
+    } catch (error) {
+        console.error('Count error:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+/* ==================================================
+   ADMIN – REGISTRATIONS (TOKEN REQUIRED)
+================================================== */
+router.get('/registrations', protect, async (req, res) => {
+    try {
+        const registrations = await Registration.findAll();
+        res.json(registrations);
+    } catch (error) {
+        console.error('Registrations fetch error:', error);
+        res.status(500).json({ message: 'Failed to fetch registrations' });
+    }
+});
+
+/* ==================================================
+   ADMIN – IDEAS (TOKEN REQUIRED)
+================================================== */
+router.get('/ideas', protect, async (req, res) => {
+    try {
+        const ideas = await Idea.findAll();
+        res.json(ideas);
+    } catch (error) {
+        console.error('Ideas fetch error:', error);
+        res.status(500).json({ message: 'Failed to fetch ideas' });
+    }
+});
+
+module.exports = router;
