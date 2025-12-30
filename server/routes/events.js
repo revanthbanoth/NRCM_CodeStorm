@@ -92,7 +92,7 @@ router.get('/registrations', protect, async (req, res) => {
 /* ==================================================
    ADMIN – IDEAS (TOKEN REQUIRED)
 ================================================== */
-router.get('/ideas', protect, async (req, res) => {
+router.get('/ideas', async (req, res) => {
     try {
         const ideas = await Idea.findAll();
         res.json(ideas);
