@@ -327,10 +327,11 @@ const AdminDashboard = () => {
                                                     <div className="text-[10px] text-gray-500 uppercase tracking-widest mt-0.5">{item.branch} • {item.year} Year</div>
                                                 </td>
                                                 <td className="px-6 py-5">
-                                                       <span className="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-semibold">
-                                                           {item.teamMembers} Members
-                                                                    </span>
-                                                   </td>
+                                                  <span className="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-semibold">
+                                                      {Number(item.teamMembers) || 0} Members
+                                                   </span>
+                                                </td>
+
 
 
                                             </>
