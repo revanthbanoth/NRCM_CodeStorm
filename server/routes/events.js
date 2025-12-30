@@ -26,7 +26,7 @@ const upload = multer({
 
 /**
  * ==================================================
- * HEALTH CHECK (VERY IMPORTANT)
+ * HEALTH CHECK
  * GET /api/events/health
  * ==================================================
  */
@@ -101,9 +101,15 @@ router.get('/count', async (req, res) => {
  */
 router.get('/registrations', protect, async (req, res) => {
     try {
+        // OPTIONAL: admin-only safety check
+        if (!req.user || req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Admin access only' });
+        }
+
         const registrations = await Registration.findAll({
             order: [['createdAt', 'DESC']]
         });
+
         res.json(registrations);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -118,9 +124,15 @@ router.get('/registrations', protect, async (req, res) => {
  */
 router.get('/ideas', protect, async (req, res) => {
     try {
+        // OPTIONAL: admin-only safety check
+        if (!req.user || req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Admin access only' });
+        }
+
         const ideas = await Idea.findAll({
             order: [['createdAt', 'DESC']]
         });
+
         res.json(ideas);
     } catch (error) {
         res.status(500).json({ message: error.message });
