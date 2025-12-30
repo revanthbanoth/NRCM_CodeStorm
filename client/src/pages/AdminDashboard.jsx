@@ -31,28 +31,38 @@ const AdminDashboard = () => {
 
     const fetchData = async (token) => {
   setLoading(true);
+
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+
   try {
-    const config = {
-      headers: { Authorization: `Bearer ${token}` }
-    };
-    const [regRes, ideaRes] = await Promise.all([
-      axios.get(`${apiUrl}/api/events/registrations`, config),
-      axios.get(`${apiUrl}/api/events/ideas`, config)
-    ]);
-    setRegistrations(regRes.data);
-    setIdeas(ideaRes.data);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    if (error.response?.status === 401) {
-      handleLogout();
-      toast.error("Session expired. Please login again.");
-    } else {
-      toast.error("Failed to load dashboard data");
-    }
-  } finally {
-    setLoading(false);
+    // ✅ Registrations (main data)
+    const regRes = await axios.get(
+      `${apiUrl}/api/events/registrations`,
+      config
+    );
+    setRegistrations(Array.isArray(regRes.data) ? regRes.data : []);
+  } catch (err) {
+    console.error("Registrations error:", err);
+    setRegistrations([]);
   }
+
+  try {
+    // ✅ Ideas (optional – do NOT break dashboard)
+    const ideaRes = await axios.get(
+      `${apiUrl}/api/events/ideas`,
+      config
+    );
+    setIdeas(Array.isArray(ideaRes.data) ? ideaRes.data : []);
+  } catch (err) {
+    console.warn("Ideas fetch failed (ignored for demo)");
+    setIdeas([]); // 👈 VERY IMPORTANT
+  }
+
+  setLoading(false);
 };
+
 
 
     const handleLogin = async (e) => {
