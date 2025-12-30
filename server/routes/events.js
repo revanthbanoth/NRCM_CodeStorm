@@ -92,14 +92,25 @@ router.get('/registrations', protect, async (req, res) => {
 /* ==================================================
    ADMIN – IDEAS (TOKEN REQUIRED)
 ================================================== */
-router.get('/ideas', async (req, res) => {
-    try {
-        const ideas = await Idea.findAll();
-        res.json(ideas);
-    } catch (error) {
-        console.error('Ideas fetch error:', error);
-        res.status(500).json({ message: 'Failed to fetch ideas' });
-    }
+router.get('/ideas', protect, async (req, res) => {
+  try {
+    console.log('✅ Fetching ideas for admin:', req.user?.id);
+
+    const ideas = await Idea.findAll({
+      order: [['createdAt', 'DESC']]
+    });
+
+    console.log(`✅ Ideas found: ${ideas.length}`);
+    res.status(200).json(ideas);
+
+  } catch (error) {
+    console.error('❌ Ideas fetch error:', error);
+    res.status(500).json({
+      message: 'Ideas fetch failed',
+      error: error.message
+    });
+  }
 });
+
 
 module.exports = router;
