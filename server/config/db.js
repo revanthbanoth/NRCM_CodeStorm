@@ -4,11 +4,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 /**
- * =================================================
- * TiDB Cloud uses SINGLE DATABASE_URL
- * =================================================
- * Example:
- * mysql://username:password@host:4000/database
+ * =========================================
+ * TiDB Cloud - DATABASE_URL connection
+ * =========================================
  */
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'mysql',
@@ -26,12 +24,11 @@ const connectDB = async () => {
     await sequelize.authenticate();
     console.log('✅ Connected to TiDB Cloud successfully');
 
-    await sequelize.sync({ alter: false });
+    await sequelize.sync(); // keep simple
     console.log('✅ Models synced');
-
   } catch (error) {
     console.error('❌ Unable to connect to the database:', error);
-    throw error; // IMPORTANT: let Render know it failed
+    process.exit(1); // stop server if DB fails
   }
 };
 
