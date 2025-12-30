@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const protect = (req, res, next) => {
     let token;
 
-    // Token must come as: Authorization: Bearer <token>
     if (
         req.headers.authorization &&
         req.headers.authorization.startsWith('Bearer ')
@@ -19,7 +18,7 @@ const protect = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // must include role or isAdmin
+        req.user = decoded; // { id, role }
         next();
     } catch (error) {
         return res.status(401).json({
