@@ -7,19 +7,24 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false
-    }
-  }
+      rejectUnauthorized: false,
+    },
+  },
 });
 
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ TiDB Connected');
+    console.log('✅ Database connected');
+    await sequelize.sync();
+    console.log('✅ Models synced');
   } catch (error) {
-    console.error('❌ DB Connection Failed:', error);
-    process.exit(1);
+    console.error('❌ DB connection failed:', error.message);
+    throw error; // IMPORTANT for Render
   }
 };
 
-module.exports = { sequelize, connectDB };
+module.exports = {
+  sequelize,
+  connectDB,
+};
