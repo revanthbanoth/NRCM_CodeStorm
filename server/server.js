@@ -2,30 +2,36 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const { connectDB, sequelize } = require('./config/db');
-const Registration = require('./models/Registration');
-const registrationRoutes = require('./routes/registrationRoutes');
+const { connectDB } = require('./config/db');
+
+// ROUTES (ONLY EXISTING ONES)
+const authRoutes = require('./routes/auth');
+const eventRoutes = require('./routes/events');
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Test route
 app.get('/', (req, res) => {
-  res.send('Backend running');
+  res.send('Backend running successfully 🚀');
 });
 
-app.use('/api/registrations', registrationRoutes);
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes);
 
+// DB + Server start
 const PORT = process.env.PORT || 5000;
 
-const startServer = async () => {
-  await connectDB();
-  await sequelize.sync(); // creates table if not exists
-
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ DB connection failed:', err.message);
   });
-};
-
-startServer();
