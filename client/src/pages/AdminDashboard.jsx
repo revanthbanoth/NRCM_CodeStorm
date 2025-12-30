@@ -92,17 +92,19 @@ const AdminDashboard = () => {
         setIdeas([]);
     };
 
-    const filteredData = activeTab === 'registrations'
-        ? registrations.filter(r =>
-            r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            r.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            r.teamName?.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-       ideas.filter(i =>
-  (i.projectTitle || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-  (i.teamName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-  (i.theme || '').toLowerCase().includes(searchTerm.toLowerCase())
-)
+    const filteredData =
+  activeTab === 'registrations'
+    ? registrations.filter(r =>
+        (r.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (r.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (r.teamName || '').toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : ideas.filter(i =>
+        (i.projectTitle || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (i.teamName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (i.theme || '').toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
 
 
 
