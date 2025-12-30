@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 
-// ✅ IMPORTANT: file names must MATCH exactly (case-sensitive)
+// Models (DO NOT CHANGE)
 const Registration = require('../models/Registration');
 const Idea = require('../models/Idea');
 const { protect } = require('../middleware/authMiddleware');
@@ -31,7 +31,7 @@ router.get('/health', (req, res) => {
 });
 
 /* ==================================================
-   REGISTER EVENT
+   REGISTER EVENT (DO NOT TOUCH)
 ================================================== */
 router.post('/register', async (req, res) => {
     try {
@@ -44,9 +44,9 @@ router.post('/register', async (req, res) => {
 });
 
 /* ==================================================
-   SUBMIT IDEA
+   SUBMIT IDEA (✅ FIXED HERE ONLY)
 ================================================== */
-router.post('/idea', upload.single('pptFile'), async (req, res) => {
+router.post('/idea', upload.single('file'), async (req, res) => {
     try {
         const ideaData = {
             ...req.body,
