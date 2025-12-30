@@ -326,14 +326,15 @@ const AdminDashboard = () => {
                                                     <div className="text-gray-300 text-sm font-medium">{item.college}</div>
                                                     <div className="text-[10px] text-gray-500 uppercase tracking-widest mt-0.5">{item.branch} • {item.year} Year</div>
                                                 </td>
-                                                
-                                                   <div className="text-sm text-gray-300">
-                                                   <div className="font-medium">{item.name}</div>
-                                                   <div className="text-xs text-gray-500">
-                                                     Leader • {item.email}
+                                                <td className="px-6 py-5">
+                                                     <div className="text-sm text-gray-300">
+                                                     <div className="font-medium">{item.name}</div>
+                                                     <div className="text-xs text-gray-500">
+                                                        Leader • {item.email}
+                                                           </div>
                                                     </div>
-                                                     </div>
-                                                   </td>
+                                               </td>
+
                                             </>
                                         ) : (
                                             <>
