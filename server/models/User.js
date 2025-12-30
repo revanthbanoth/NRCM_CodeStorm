@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const sequelize = require('../config/db');   // ✅ FIXED LINE
 const bcrypt = require('bcryptjs');
 
 const User = sequelize.define('User', {
@@ -32,6 +32,7 @@ const User = sequelize.define('User', {
     }
 });
 
+// 🔐 Password match method
 User.prototype.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
