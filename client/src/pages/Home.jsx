@@ -332,7 +332,7 @@ const Home = () => {
 
             <footer className="py-12 text-center text-gray-400/60 text-sm border-t border-white/5 bg-black/60 backdrop-blur-md relative z-20">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p>© 2026 CodeStorm Hackathon, NRCMEC. All rights reserved.</p>
+                    <p>© 2025 • Designed & Developed by B Revanth.</p>
                     <div className="flex gap-6 text-xs uppercase tracking-widest font-bold items-center">
                         <button onClick={() => scrollToSection('#home')} className="hover:text-white transition-colors">Back to Top</button>
                         <Link to="/register" className="hover:text-white transition-colors">Register</Link>
